@@ -1,0 +1,389 @@
+@tailwind base;
+
+@custom-variant dark (&:is(.dark *));
+@tailwind components;
+
+/* ========================= POPPINS IMPORT ===================== */
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../assets/fonts/Poppins/Poppins-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* =================== Font Import End ======================== */
+
+/* =================== Basic Styles Start ======================== */
+
+*,
+*::before,
+*::after {
+  -webkit-user-drag: none;
+}
+
+html {
+  /* @apply text-[105%] lg:text-[inherit] xl:text-[100%]; */
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  font-family: ui-sans-serif, system-ui, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+::-webkit-scrollbar {
+  @apply w-1 h-[5px] bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply w-0 bg-neutral-400 rounded-full;
+}
+
+::selection {
+  @apply bg-skyblue text-white;
+}
+
+body {
+  @apply cursor-default relative;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+bold,
+a,
+span {
+  @apply font-poppins;
+}
+
+p {
+  @apply font-poppins;
+}
+
+/* =================== Basic Styles End ======================== */
+
+/* =================== Reusable Styling Start ======================== */
+
+.row {
+  @apply w-full h-full m-auto;
+  /* @apply w-row-sm lg:w-row max-w-[120rem] m-auto; */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden {
+  @apply transition-all duration-300;
+}
+
+.scrollbar-hidden:hover::-webkit-scrollbar {
+  @apply block;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  @apply w-[2px] hidden;
+}
+
+.input-type-number::-webkit-inner-spin-button,
+.input-type-number::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide spinners in Firefox */
+.input-type-number {
+  -moz-appearance: textfield;
+}
+
+/* src/index.css */
+#nprogress .bar {
+  background: #24a9e2 !important;
+  height: 4px !important;
+}
+
+/* =================== Reusable Styling End ======================== */
+
+/* =================== Navigation Menus Start ======================== */
+
+.nav-link {
+  @apply relative p-1 transition-all duration-300 uppercase;
+}
+
+.nav-link-active {
+  @apply text-skyblue;
+}
+
+.nav-link::after {
+  @apply content-[""] absolute w-0 h-[0.2rem] bg-skyblue left-0 -bottom-1 transition-all duration-300;
+}
+
+.nav-link-active::after {
+  @apply w-full;
+}
+
+.nav-link:hover {
+  @apply text-skyblue;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+.hamburger-menu-container {
+  @apply w-10 h-8 cursor-pointer;
+}
+
+.hamburger-menu-container span,
+.hamburger-menu-container span::before,
+.hamburger-menu-container span::after {
+  @apply bg-skyblue rounded-md content-[''] absolute w-10 h-[4px]  mt-[13px] transition-all duration-300 ease-in-out;
+}
+
+.hamburger-menu-container span::before {
+  @apply -mt-3;
+}
+
+.hamburger-menu-container span::after {
+  @apply mt-3;
+}
+
+.hamburger-menu-container.active span {
+  @apply bg-transparent;
+}
+
+.hamburger-menu-container.active span::before {
+  @apply mt-0 transform rotate-45;
+}
+
+.hamburger-menu-container.active span::after {
+  @apply mt-0 transform -rotate-45;
+}
+
+/* =================== Navigation Menus End ======================== */
+
+/* ======================= Swiper Start ========================== */
+
+.swiper {
+  @apply w-full h-full;
+}
+
+.swiper-slide {
+  @apply text-center text-lg flex items-center justify-center h-auto !important;
+}
+
+.swiper-pagination .swiper-pagination-bullet {
+  @apply bg-neutral-300 opacity-100;
+}
+
+.swiper-pagination .swiper-pagination-bullet-active {
+  @apply w-3 h-3 bg-skyblue;
+}
+
+/* ================ Swiper End ================= */
+
+/* ================ About Timeline Start ================= */
+
+.vertical-timeline-element-content {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.vertical-timeline--two-columns
+  .vertical-timeline-element-content
+  .vertical-timeline-element-date {
+  top: 0px !important;
+}
+
+.vertical-timeline::before {
+  width: 3px !important;
+  z-index: -2 !important;
+}
+
+.vertical-timeline-element-content .vertical-timeline-element-date {
+  opacity: 1 !important;
+}
+
+/* ================ About Timeline End ================= */
+
+/* ================ Form Start ================= */
+
+.form-group {
+  @apply w-full h-auto flex items-center justify-around gap-2 lg:text-xl text-lg;
+}
+
+.form-group textarea {
+  @apply py-[0.3rem] pl-4 border-[0.15rem] border-solid border-gray/50 focus:border-skyblue text-black rounded-[0.4rem] transition-all duration-300 w-full outline-none placeholder:text-neutral-500 text-lg;
+}
+
+.form-group input[type="submit"] {
+  @apply py-[0.3rem] pl-4 border-[0.15rem] border-solid border-skyblue text-white rounded-[0.4rem] transition-all duration-300 w-full outline-none;
+}
+
+.form-group input[type="submit"]:hover {
+  @apply bg-darkblue border-darkblue;
+}
+
+/* ================ Form End ================= */
+
+/* ================ Product Page Start ================= */
+
+/* Hide spinners in Chrome, Edge, and Safari */
+.product-quantity-input::-webkit-inner-spin-button,
+.product-quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide spinners in Firefox */
+.product-quantity-input {
+  -moz-appearance: textfield;
+}
+
+/* ================ Product Page End ================= */
+
+@layer utilities {
+  .animation-delay-100 {
+    animation-delay: 0.1s;
+  }
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-caret-blink {
+  animation: caret-blink 1s infinite;
+}
+
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 2.4%;
+    --muted: 0 0% 95.7%;
+    --muted-foreground: 0 0% 47.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 2.4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 2.4%;
+    --primary: 198 76.6% 51.4%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 234 53.4% 37.1%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 207 100% 94.7%;
+    --accent-foreground: 198 76.6% 51.4%;
+    --destructive: 350 89.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --input: 0 0% 87.8%;
+    --border: 0 0% 87.8%;
+    --ring: 198 76.6% 51.4%;
+    --sidebar-background: 210 40% 96.1%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 198 76.6% 51.4%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 207 100% 94.7%;
+    --sidebar-accent-foreground: 198 76.6% 51.4%;
+    --sidebar-border: 0 0% 0%;
+    --sidebar-ring: 197 50.4% 76.3%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  :root {
+    --chart-1: 163 72% 41%;
+    --chart-2: 262 52% 47%;
+    --chart-3: 45 91% 51%;
+    --chart-4: 174 62% 47%;
+    --chart-5: 231 48% 48%;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thick::-webkit-scrollbar {
+    height: 50px;
+  }
+  .scrollbar-thick::-webkit-scrollbar-thumb {
+    background-color: #a0aec0; /* gray-400 */
+    border-radius: 6px;
+  }
+  .scrollbar-thick::-webkit-scrollbar-track {
+    background-color: #f7fafc; /* gray-100 */
+  }
+}
