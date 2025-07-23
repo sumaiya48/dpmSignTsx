@@ -209,7 +209,7 @@ const Invoice = () => {
 							{/* Order Details */}
 							<div className="w-full h-auto mb-4">
 								<h3 className="text-base font-bold">Order Details</h3>
-								<table className="w-full table-auto border-collapse mt-2 text-sm">
+								<table className="w-full  table-auto border-collapse mt-2 text-sm">
 									<thead>
 										<tr className="bg-skyblue text-white">
 											<th className="border border-gray/50 p-2 bg-gray-100">
@@ -237,9 +237,9 @@ const Invoice = () => {
 														<td className="border border-gray/50 p-2 text-center">
 															{++index}
 														</td>
-														<td className="border border-gray/50 p-2 truncate flex flex-col">
+														<td className="border border-gray/50 p-2 whitespace-normal break-words flex flex-col">
 															{orderItem?.product?.name}
-															<span className="text-xs text-neutral-600">
+															<span className="text-xs text-neutral-600 ">
 																{orderItem?.productVariant?.variantDetails.map(
 																	(detail: any) => (
 																		<span

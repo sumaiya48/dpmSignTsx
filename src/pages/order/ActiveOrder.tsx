@@ -127,7 +127,8 @@ const [tempVisibleColumns, setTempVisibleColumns] = useState<string[]>([]);
   "deliveryDate",
   "status",
   "method",
-  "agent"
+  "agent",
+  "action"
 ]);
 
 
@@ -152,6 +153,7 @@ const allColumns = [
   { key: "status", label: "Order Status" },
   { key: "method", label: "Order Mode" },
   { key: "agent", label: "Agent" },
+  { key: "action", label: "Action" },
 ];
 
 
@@ -171,7 +173,7 @@ const allColumns = [
 	useEffect(() => {
 		setFilteredBy("active");
 	}, [orders]);
-
+console.log(orders)
 	useEffect(() => {
 		if (error) {
 			toast({
@@ -460,6 +462,7 @@ console.log(orders)
     {visibleColumns.includes("status") && <TableHead>Order Status</TableHead>}
     {visibleColumns.includes("method") && <TableHead>Order Mode</TableHead>}
     {visibleColumns.includes("agent") && <TableHead>Agent</TableHead>}
+    {visibleColumns.includes("action") && <TableHead>Action</TableHead>}
     {/* <TableHead className="w-[60px] pr-5">Actions</TableHead> */}
   </TableRow>
 </TableHeader>
@@ -494,9 +497,13 @@ console.log(orders)
     <TableCell>{order.customerEmail}</TableCell>
   )}
   {visibleColumns.includes("orderDetails") && (
-    <TableCell className="text-xs underline" onClick={() => setOrderViewDialogId(order.orderId)}>
-      View Details
-    </TableCell>
+    <TableCell
+														onClick={() => setOrderViewDialogId(order.orderId)}
+														className="text-sm underline"
+													>
+														
+														View details
+													</TableCell>
   )}
   {visibleColumns.includes("totalAmount") && (
     <TableCell>{totalAmount.toLocaleString()} {currencyCode}</TableCell>
@@ -566,6 +573,53 @@ console.log(orders)
       <div>{staffInfo?.name ?? "N/A"}</div>
       <div className="text-xs text-gray-500">{staffInfo?.phone ?? "N/A"}</div>
     </TableCell>
+  )}
+  {visibleColumns.includes("agent") && (
+    <TableCell>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost">
+													<MoreHorizontal />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuLabel>Actions</DropdownMenuLabel>
+												<DropdownMenuSeparator />
+												<DropdownMenuGroup>
+													<DropdownMenuItem
+														onClick={() => setOrderViewDialogId(order.orderId)}
+													>
+														<Eye />
+														View
+													</DropdownMenuItem>
+	
+													{user?.role === "admin" && (
+													<DropdownMenuItem
+														className="text-rose-500"
+														onClick={() => setDeleteDialogOpenId(order.orderId)}
+													>
+														<Trash />
+														Delete
+													</DropdownMenuItem>
+												)}
+												</DropdownMenuGroup>
+											</DropdownMenuContent>
+										</DropdownMenu>
+	
+										<OrderViewDialog
+											order={order}
+											open={orderViewDialogId === order.orderId}
+											setOpen={setOrderViewDialogId}
+										/>
+										{/* <OrderDeleteDialog
+	
+									{/* product item delete dialog */}
+										{/* <ProductDeleteDialog
+									product={order}
+									deleteDialogOpenId={deleteDialogOpenId}
+									setDeleteDialogOpenId={setDeleteDialogOpenId}
+								/> */}
+									</TableCell>
   )}
   {/* <TableCell>Actions column remains always visible</TableCell> */}
 </TableRow>

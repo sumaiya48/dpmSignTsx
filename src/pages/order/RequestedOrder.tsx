@@ -95,8 +95,55 @@ import { orderService } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { useDisclosure } from "@mantine/hooks";
 import { useCouriers } from "@/hooks/use-courier";
+import ColumnManager from "@/components/ui/ColumnManager";
 
 const RequestedOrder = () => {
+
+	
+			const [visibleColumns, setVisibleColumns] = useState<string[]>([
+	  
+	  "orderId",
+	  "customerName",
+	  "email",
+	  "phone",
+	  "orderDetails",
+	  "totalAmount",
+	  "paymentMethod",
+	  "paymentStatus",
+	  "deliveryMethod",
+	  "deliveryDate",
+	  "status",
+	  "method",
+	  "agentName",
+	  "agentNumber",
+	  "orderDate",
+	  "action"
+	]);
+	
+	
+	
+	
+	const allColumns = [
+	  { key: "orderId", label: "Order ID" },
+	  { key: "customerName", label: "Customer Name" },
+	  { key: "email", label: "Email" },
+	  { key: "phone", label: "Phone" },
+	  { key: "orderDetails", label: "Order Details" },
+	  { key: "totalAmount", label: "Total Amount" },
+	  { key: "paymentMethod", label: "Payment Method" },
+	  { key: "paymentStatus", label: "Payment Status" },
+	  { key: "deliveryMethod", label: "Delivery Method" },
+	  { key: "deliveryDate", label: "Exp. Delivery Date" },
+	  { key: "status", label: "Order Status" },
+	  { key: "method", label: "Order Mode" },
+	  { key: "agentName", label: "Agent Name" },
+	  { key: "agentNumber", label: "Agent Name" },
+	  { key: "orderDate", label: "Order Date" },
+	  { key: "action", label: "Action" },
+	];
+	
+
+
 	const {
 		orders,
 		setSearchTerm,
@@ -223,6 +270,12 @@ const RequestedOrder = () => {
 							<Trash size={15} />
 							Delete Selected
 						</Button> */}
+						<ColumnManager
+  allColumns={allColumns}
+  visibleColumns={visibleColumns}
+  setVisibleColumns={setVisibleColumns}
+/>
+
 					</div>
 
 					<div className="flex items-center justify-between gap-3">
@@ -250,18 +303,21 @@ const RequestedOrder = () => {
 			{/* orders tabs */}
 			{orders.length > 0 ? (
 				<div className="w-full border border-neutral-200 rounded-lg">
-					<RenderTable orders={orders} />
+					<RenderTable orders={orders}
+					visibleColumns={visibleColumns} />
 				</div>
 			) : (
 				<div className="text-center py-20">
 					<p className="text-neutral-500 mb-6 font-medium">No order found</p>
 				</div>
 			)}
+
+
 		</section>
 	);
 };
 
-const RenderTable = ({ orders }: { orders: OrderProps[] }) => {
+const RenderTable = ({ orders }: { orders: OrderProps[],visibleColumns: string[] }) => {
 	const { loading, totalPages, page, setPage } = useOrders();
 	const { staff } = useStaff();
 	const { checkCoupon } = useCoupons();
