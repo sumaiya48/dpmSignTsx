@@ -99,6 +99,7 @@ import {
 	Pen,
 	Phone,
 	Search,
+	Settings,
 	Trash,
 	User,
 } from "lucide-react";
@@ -106,6 +107,54 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const ActiveOrder = () => {
+const [showColumnManager, setShowColumnManager] = useState(false);
+const [tempVisibleColumns, setTempVisibleColumns] = useState<string[]>([]);
+		const [visibleColumns, setVisibleColumns] = useState<string[]>([
+  "orderDate",
+  "orderId",
+  "customerName",
+  "phone",
+  "email",
+  "orderDetails",
+  "totalAmount",
+  "advancePayment",
+  "due",
+  "paymentMethod",
+  "paymentStatus",
+  "deliveryMethod",
+  "billingAddress",
+  "courier",
+  "deliveryDate",
+  "status",
+  "method",
+  "agent"
+]);
+
+
+
+
+const allColumns = [
+  { key: "orderDate", label: "Order Date" },
+  { key: "orderId", label: "Order ID" },
+  { key: "customerName", label: "Customer Name" },
+  { key: "phone", label: "Phone" },
+  { key: "email", label: "Email" },
+  { key: "orderDetails", label: "Order Details" },
+  { key: "totalAmount", label: "Total Amount" },
+  { key: "advancePayment", label: "Advance Payment" },
+  { key: "due", label: "Due" },
+  { key: "paymentMethod", label: "Payment Method" },
+  { key: "paymentStatus", label: "Payment Status" },
+  { key: "deliveryMethod", label: "Delivery Method" },
+  { key: "billingAddress", label: "Billing Address" },
+  { key: "courier", label: "Courier" },
+  { key: "deliveryDate", label: "Exp. Delivery Date" },
+  { key: "status", label: "Order Status" },
+  { key: "method", label: "Order Mode" },
+  { key: "agent", label: "Agent" },
+];
+
+
 	const {
 		orders,
 		setSearchTerm,
@@ -179,6 +228,8 @@ const ActiveOrder = () => {
 		}
 	};
 
+
+
 	return (
 		<section className="w-full py-5 pl-2 pr-5 space-y-4 overflow-x-scroll min-w-max">
 			{/* Header */}
@@ -228,9 +279,6 @@ const ActiveOrder = () => {
 							<FileText size={15} />
 							Export CSV
 						</Button>
-					</div>
-
-					<div className="flex items-center justify-between gap-3">
 						<Select
 							onValueChange={(e) => {
 								setLimit(Number(e) as number);
@@ -248,25 +296,82 @@ const ActiveOrder = () => {
 								</SelectGroup>
 							</SelectContent>
 						</Select>
+						<Button variant="outline" onClick={() => {
+  setTempVisibleColumns(visibleColumns); // modal খোলার সময় copy রাখবে
+  setShowColumnManager(true);
+}}>
+  <Settings className="mr-2 h-4 w-4" /> Manage Columns
+</Button>
+						
+					
 					</div>
+
+					
 				</div>
 			)}
 
 			{/* orders tabs */}
 			{orders.length > 0 ? (
 				<div className="w-full border border-neutral-200 rounded-lg">
-					<RenderTable orders={orders} />
+					<RenderTable orders={orders} 
+					visibleColumns={visibleColumns}
+					/>
 				</div>
 			) : (
 				<div className="text-center py-20">
 					<p className="text-neutral-500 mb-6 font-medium">No order found</p>
 				</div>
 			)}
+			<Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Manage Table Columns</DialogTitle>
+    </DialogHeader>
+    <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+      {allColumns.map((col) => (
+        <label key={col.key} className="flex items-center gap-2">
+          <Checkbox
+            checked={tempVisibleColumns.includes(col.key)}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                setTempVisibleColumns([...tempVisibleColumns, col.key]);
+              } else {
+                setTempVisibleColumns(
+                  tempVisibleColumns.filter((c) => c !== col.key)
+                );
+              }
+            }}
+          />
+          <span>{col.label}</span>
+        </label>
+      ))}
+    </div>
+    <div className="flex justify-end gap-3 mt-4">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setShowColumnManager(false); // modal বন্ধ হবে
+        }}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={() => {
+          setVisibleColumns(tempVisibleColumns); // apply করলে মূল state আপডেট হবে
+          setShowColumnManager(false);
+        }}
+      >
+        Apply
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
 		</section>
 	);
 };
 
-const RenderTable = ({ orders }: { orders: OrderProps[] }) => {
+const RenderTable = ({ orders ,visibleColumns}: { orders: OrderProps[],visibleColumns: string[] }) => {
 	const { user } = useAuth();
 	const { loading, totalPages, page, setPage } = useOrders();
 	const { staff } = useStaff();
@@ -315,10 +420,10 @@ const RenderTable = ({ orders }: { orders: OrderProps[] }) => {
 			}
 		});
 	}, [orders]);
-
+console.log(orders)
 	return (
 		<div className="w-full border border-neutral-200 rounded-lg overflow-x-auto ">
-			<div className="min-w-[1200px]">
+			<div className="w-full">
 				<Table className="border-collapse  w-full">
 				<TableCaption className="py-4 border border-t border-neutral-200">
 					Showing {orders.length} entries from
@@ -333,157 +438,142 @@ const RenderTable = ({ orders }: { orders: OrderProps[] }) => {
 					</div>
 				</TableCaption>
 				<TableHeader>
-					<TableRow className="bg-slate-100 hover:bg-slate-100">
-						<TableHead className="pl-5">
-							<Checkbox />
-						</TableHead>
-						<TableHead>OrderID</TableHead>
-						<TableHead>Customer Name</TableHead>
-						<TableHead>Customer Email</TableHead>
-						<TableHead>Customer Phone</TableHead>
-						<TableHead>Order Items</TableHead>
-						<TableHead>Total Price ({currencyCode})</TableHead>
-						<TableHead>Payment Method</TableHead>
-						<TableHead>Payment Status</TableHead>
-						<TableHead>Delivery Method</TableHead>
-						<TableHead>Est. Delivery</TableHead>
-						<TableHead>Current Status</TableHead>
-						<TableHead>Source</TableHead>
-						<TableHead>Agent Name</TableHead>
-						<TableHead>Agent Number</TableHead>
-						<TableHead>Date Added</TableHead>
-						<TableHead className="w-[60px] pr-5">Actions</TableHead>
-					</TableRow>
-				</TableHeader>
-				{loading ? (
-					<>
-						<LoadingOverlay
-							visible={loading}
-							zIndex={10}
-							overlayProps={{ radius: "xs", blur: 1 }}
-						/>
-					</>
-				) : (
-					<TableBody>
-						{orders.map((order) => (
-							<TableRow key={order.orderId}>
-								<TableCell className="pl-5">
-									<Checkbox />
-								</TableCell>
-								<TableCell>#{order.orderId}</TableCell>
-								<TableCell>{order.customerName}</TableCell>
-								<TableCell>{order.customerEmail}</TableCell>
-								<TableCell>{order.customerPhone}</TableCell>
-								<TableCell>{order.orderItems.length}</TableCell>
-								<TableCell>
-									{orderTotalCouponCheckedPrices[order.orderId] != null
-										? `${orderTotalCouponCheckedPrices[
-												order.orderId
-										  ].toLocaleString()} ${currencyCode}`
-										: "Calculating..."}
-								</TableCell>
-								<TableCell>
-									{order.paymentMethod === "cod-payment" ? "COD" : "Online"}
-								</TableCell>
-								<TableCell>
-									<Badge
-										variant={
-											order.paymentStatus === "paid"
-												? "success"
-												: order.paymentStatus === "partial"
-												? "default"
-												: "destructive"
-										}
-										size="sm"
-									>
-										{order.paymentStatus}
-									</Badge>
-								</TableCell>
+  <TableRow className="bg-slate-100 hover:bg-slate-100">
+    <TableHead className="pl-5">
+      <Checkbox />
+    </TableHead>
+    {visibleColumns.includes("orderDate") && <TableHead>Order Date</TableHead>}
+    {visibleColumns.includes("orderId") && <TableHead>Order ID</TableHead>}
+    {visibleColumns.includes("customerName") && <TableHead>Customer Name</TableHead>}
+    {visibleColumns.includes("phone") && <TableHead>Phone</TableHead>}
+    {visibleColumns.includes("email") && <TableHead>Email</TableHead>}
+    {visibleColumns.includes("orderDetails") && <TableHead>Order Details</TableHead>}
+    {visibleColumns.includes("totalAmount") && <TableHead>Total Amount</TableHead>}
+    {visibleColumns.includes("advancePayment") && <TableHead>Advance Payment</TableHead>}
+    {visibleColumns.includes("due") && <TableHead>Due</TableHead>}
+    {visibleColumns.includes("paymentMethod") && <TableHead>Payment Method</TableHead>}
+    {visibleColumns.includes("paymentStatus") && <TableHead>Payment Status</TableHead>}
+    {visibleColumns.includes("deliveryMethod") && <TableHead>Delivery Method</TableHead>}
+    {visibleColumns.includes("billingAddress") && <TableHead>Billing Address</TableHead>}
+    {visibleColumns.includes("courier") && <TableHead>Courier</TableHead>}
+    {visibleColumns.includes("deliveryDate") && <TableHead>Exp. Delivery Date</TableHead>}
+    {visibleColumns.includes("status") && <TableHead>Order Status</TableHead>}
+    {visibleColumns.includes("method") && <TableHead>Order Mode</TableHead>}
+    {visibleColumns.includes("agent") && <TableHead>Agent</TableHead>}
+    {/* <TableHead className="w-[60px] pr-5">Actions</TableHead> */}
+  </TableRow>
+</TableHeader>
+{loading ? (
+  <LoadingOverlay visible={loading} zIndex={10} overlayProps={{ radius: "xs", blur: 1 }} />
+) : (
+  <TableBody>
+    {orders.map((order) => {
+      const staffInfo = staff.find((s) => s.staffId === order.staffId);
+      const advancePayment = order.payments?.[0]?.amount ?? 0;
+      const totalAmount = orderTotalCouponCheckedPrices[order.orderId] ?? 0;
+      const dueAmount = totalAmount - advancePayment;
 
-								<TableCell>{order.deliveryMethod}</TableCell>
-								<TableCell>
-									{order.deliveryDate
-										? new Date(order.deliveryDate).toDateString()
-										: "N/A"}
-								</TableCell>
-								<TableCell>
-									<Badge size="sm" variant={order.status as any}>
-										{order.status.split("-").join(" ")}
-									</Badge>
-								</TableCell>
-								<TableCell>
-									<Badge
-										size="sm"
-										variant={
-											order.method === "online" ? "success" : "secondary"
-										}
-									>
-										{order.method}
-									</Badge>
-								</TableCell>
-								<TableCell>
-									{staff.filter(
-										(staffItem) => staffItem.staffId === order.staffId
-									)[0]?.name ?? "N/A"}
-								</TableCell>
-								<TableCell>
-									{staff.filter(
-										(staffItem) => staffItem.staffId === order.staffId
-									)[0]?.phone ?? "N/A"}
-								</TableCell>
-								<TableCell>
-									{new Date(order.createdAt).toDateString()}
-								</TableCell>
+      return (
+        <TableRow key={order.orderId}>
+  <TableCell className="pl-5">
+    <Checkbox />
+  </TableCell>
+  {visibleColumns.includes("orderDate") && (
+    <TableCell>{new Date(order.createdAt).toDateString()}</TableCell>
+  )}
+  {visibleColumns.includes("orderId") && (
+    <TableCell>#{order.orderId}</TableCell>
+  )}
+  {visibleColumns.includes("customerName") && (
+    <TableCell>{order.customerName}</TableCell>
+  )}
+  {visibleColumns.includes("phone") && (
+    <TableCell>{order.customerPhone}</TableCell>
+  )}
+  {visibleColumns.includes("email") && (
+    <TableCell>{order.customerEmail}</TableCell>
+  )}
+  {visibleColumns.includes("orderDetails") && (
+    <TableCell className="text-xs underline" onClick={() => setOrderViewDialogId(order.orderId)}>
+      View Details
+    </TableCell>
+  )}
+  {visibleColumns.includes("totalAmount") && (
+    <TableCell>{totalAmount.toLocaleString()} {currencyCode}</TableCell>
+  )}
+  {visibleColumns.includes("advancePayment") && (
+    <TableCell>{advancePayment.toLocaleString()} {currencyCode}</TableCell>
+  )}
+  {visibleColumns.includes("due") && (
+    <TableCell>{dueAmount.toLocaleString()} {currencyCode}</TableCell>
+  )}
+  {visibleColumns.includes("paymentMethod") && (
+    <TableCell>{order.paymentMethod === "cod-payment" ? "COD" : "Online"}</TableCell>
+  )}
+  {visibleColumns.includes("paymentStatus") && (
+    <TableCell>
+      <Badge
+        variant={
+          order.paymentStatus === "paid"
+            ? "success"
+            : order.paymentStatus === "partial"
+            ? "default"
+            : "destructive"
+        }
+        size="sm"
+      >
+        {order.paymentStatus}
+      </Badge>
+    </TableCell>
+  )}
+  {visibleColumns.includes("deliveryMethod") && (
+    <TableCell>{order.deliveryMethod}</TableCell>
+  )}
+  {visibleColumns.includes("billingAddress") && (
+    <TableCell title={order.billingAddress}>
+      <div className="truncate max-w-[150px]">
+        {order.billingAddress || "N/A"}
+      </div>
+    </TableCell>
+  )}
+  {visibleColumns.includes("courier") && (
+    <TableCell>{order.courierId || "N/A"}</TableCell>
+  )}
+  {visibleColumns.includes("deliveryDate") && (
+    <TableCell>
+      {order.deliveryDate ? new Date(order.deliveryDate).toDateString() : "N/A"}
+    </TableCell>
+  )}
+  {visibleColumns.includes("status") && (
+    <TableCell>
+      <Badge size="sm" variant={order.status as any}>
+        {order.status?.split("-").join(" ") || "N/A"}
+      </Badge>
+    </TableCell>
+  )}
+  {visibleColumns.includes("method") && (
+    <TableCell>
+      <Badge
+        size="sm"
+        variant={order.method === "online" ? "success" : "secondary"}
+      >
+        {order.method}
+      </Badge>
+    </TableCell>
+  )}
+  {visibleColumns.includes("agent") && (
+    <TableCell>
+      <div>{staffInfo?.name ?? "N/A"}</div>
+      <div className="text-xs text-gray-500">{staffInfo?.phone ?? "N/A"}</div>
+    </TableCell>
+  )}
+  {/* <TableCell>Actions column remains always visible</TableCell> */}
+</TableRow>
 
-								<TableCell>
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button variant="ghost">
-												<MoreHorizontal />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuLabel>Actions</DropdownMenuLabel>
-											<DropdownMenuSeparator />
-											<DropdownMenuGroup>
-												<DropdownMenuItem
-													onClick={() => setOrderViewDialogId(order.orderId)}
-												>
-													<Eye />
-													View
-												</DropdownMenuItem>
-
-												{user?.role === "admin" && (
-													<DropdownMenuItem
-														className="text-rose-500"
-														onClick={() => setDeleteDialogOpenId(order.orderId)}
-													>
-														<Trash />
-														Delete
-													</DropdownMenuItem>
-												)}
-											</DropdownMenuGroup>
-										</DropdownMenuContent>
-									</DropdownMenu>
-
-									<OrderViewDialog
-										order={order}
-										open={orderViewDialogId === order.orderId}
-										setOpen={setOrderViewDialogId}
-									/>
-									{/* <OrderDeleteDialog
-
-								{/* product item delete dialog */}
-									<OrderDeleteDialog
-										order={order}
-										deleteDialogOpenId={deleteDialogOpenId}
-										setDeleteDialogOpenId={setDeleteDialogOpenId}
-									/>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				)}
+      );
+    })}
+  </TableBody>
+)}
 			</Table>
 			</div>
 		</div>
@@ -761,6 +851,7 @@ const OrderViewDialog = ({ order, open, setOpen }: OrderViewDialogProps) => {
 											</PopoverContent>
 										</Popover>
 									</div>
+								
 								)}
 							</div>
 							<div className="flex items-center gap-2 ">
@@ -1573,5 +1664,8 @@ const OrderDeleteDialog = ({
 		</AlertDialog>
 	);
 };
+
+
+
 
 export default ActiveOrder;
