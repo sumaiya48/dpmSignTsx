@@ -1,3 +1,4 @@
+// Documentation: This component displays a list of active orders, allowing users to search, filter, export, and manage visible table columns. It also includes functionality to view and update order details, and delete orders (for admin users).
 import { orderService } from "@/api";
 import Header from "@/components/header";
 import {
@@ -105,57 +106,63 @@ import {
 } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// Documentation: Corrected import path for OrderTable to be a sibling component within src/pages/order.
+import OrderTable from "./OrderTable";
+// Documentation: Corrected import path for OrderViewDialog to be relative to src/pages/order/dialogs.
+import OrderViewDialog from "./dialogs/OrderViewDialog";
+// Documentation: Corrected import path for OrderDeleteDialog to be relative to src/pages/order/dialogs.
+import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
+// Documentation: Corrected import path for ProductDetailSheet to be relative to src/pages/order/dialogs.
+import ProductDetailSheet from "./dialogs/ProductDetailSheet";
+// Documentation: EditableField is a generic UI component, so its path remains the same.
+import EditableField from "@/components/ui/EditableField";
 
 const ActiveOrder = () => {
-const [showColumnManager, setShowColumnManager] = useState(false);
-const [tempVisibleColumns, setTempVisibleColumns] = useState<string[]>([]);
-		const [visibleColumns, setVisibleColumns] = useState<string[]>([
-  "orderDate",
-  "orderId",
-  "customerName",
-  "phone",
-  "email",
-  "orderDetails",
-  "totalAmount",
-  "advancePayment",
-  "due",
-  "paymentMethod",
-  "paymentStatus",
-  "deliveryMethod",
-  "billingAddress",
-  "courier",
-  "deliveryDate",
-  "status",
-  "method",
-  "agent",
-  "action"
-]);
+	const [showColumnManager, setShowColumnManager] = useState(false);
+	const [tempVisibleColumns, setTempVisibleColumns] = useState<string[]>([]);
+	const [visibleColumns, setVisibleColumns] = useState<string[]>([
+		"orderDate",
+		"orderId",
+		"customerName",
+		"phone",
+		"email",
+		"orderDetails",
+		"totalAmount",
+		"advancePayment",
+		"due",
+		"paymentMethod",
+		"paymentStatus",
+		"deliveryMethod",
+		"billingAddress",
+		"courier",
+		"deliveryDate",
+		"status",
+		"method",
+		"agent",
+		"action",
+	]);
 
-
-
-
-const allColumns = [
-  { key: "orderDate", label: "Order Date" },
-  { key: "orderId", label: "Order ID" },
-  { key: "customerName", label: "Customer Name" },
-  { key: "phone", label: "Phone" },
-  { key: "email", label: "Email" },
-  { key: "orderDetails", label: "Order Details" },
-  { key: "totalAmount", label: "Total Amount" },
-  { key: "advancePayment", label: "Advance Payment" },
-  { key: "due", label: "Due" },
-  { key: "paymentMethod", label: "Payment Method" },
-  { key: "paymentStatus", label: "Payment Status" },
-  { key: "deliveryMethod", label: "Delivery Method" },
-  { key: "billingAddress", label: "Billing Address" },
-  { key: "courier", label: "Courier" },
-  { key: "deliveryDate", label: "Exp. Delivery Date" },
-  { key: "status", label: "Order Status" },
-  { key: "method", label: "Order Mode" },
-  { key: "agent", label: "Agent" },
-  { key: "action", label: "Action" },
-];
-
+	const allColumns = [
+		{ key: "orderDate", label: "Order Date" },
+		{ key: "orderId", label: "Order ID" },
+		{ key: "customerName", label: "Customer Name" },
+		{ key: "phone", label: "Phone" },
+		{ key: "email", label: "Email" },
+		{ key: "orderDetails", label: "Order Details" },
+		{ key: "totalAmount", label: "Total Amount" },
+		{ key: "advancePayment", label: "Advance Payment" },
+		{ key: "due", label: "Due" },
+		{ key: "paymentMethod", label: "Payment Method" },
+		{ key: "paymentStatus", label: "Payment Status" },
+		{ key: "deliveryMethod", label: "Delivery Method" },
+		{ key: "billingAddress", label: "Billing Address" },
+		{ key: "courier", label: "Courier" },
+		{ key: "deliveryDate", label: "Exp. Delivery Date" },
+		{ key: "status", label: "Order Status" },
+		{ key: "method", label: "Order Mode" },
+		{ key: "agent", label: "Agent" },
+		{ key: "action", label: "Action" },
+	];
 
 	const {
 		orders,
@@ -170,10 +177,12 @@ const allColumns = [
 	const { staff } = useStaff();
 	const { toast } = useToast();
 
+	// Documentation: Sets the filter for active orders. This effect runs only once on component mount
+	// to prevent re-fetching and potential table flickering issues.
 	useEffect(() => {
 		setFilteredBy("active");
-	}, [orders]);
-console.log(orders)
+	}, [setFilteredBy]);
+
 	useEffect(() => {
 		if (error) {
 			toast({
@@ -182,7 +191,7 @@ console.log(orders)
 				duration: 10000,
 			});
 		}
-	}, []);
+	}, [error, toast]);
 
 	// Debounce search Effect
 	useEffect(() => {
@@ -191,7 +200,7 @@ console.log(orders)
 		}, 500); // Delay of 500ms
 
 		return () => clearTimeout(handler); // Cleanup on each change
-	}, [searchValue]);
+	}, [searchValue, setSearchTerm]);
 
 	const handleExport = (format: "excel" | "csv") => {
 		const worksheetData = orders.map((order) => ({
@@ -229,8 +238,6 @@ console.log(orders)
 			createCSV(worksheetData, "active-orders");
 		}
 	};
-
-
 
 	return (
 		<section className="w-full py-5 pl-2 pr-5 space-y-4 overflow-x-scroll min-w-max">
@@ -298,26 +305,23 @@ console.log(orders)
 								</SelectGroup>
 							</SelectContent>
 						</Select>
-						<Button variant="outline" onClick={() => {
-  setTempVisibleColumns(visibleColumns); // modal খোলার সময় copy রাখবে
-  setShowColumnManager(true);
-}}>
-  <Settings className="mr-2 h-4 w-4" /> Manage Columns
-</Button>
-						
-					
+						<Button
+							variant="outline"
+							onClick={() => {
+								setTempVisibleColumns(visibleColumns); // modal খোলার সময় copy রাখবে
+								setShowColumnManager(true);
+							}}
+						>
+							<Settings className="mr-2 h-4 w-4" /> Manage Columns
+						</Button>
 					</div>
-
-					
 				</div>
 			)}
 
 			{/* orders tabs */}
 			{orders.length > 0 ? (
 				<div className="w-full border border-neutral-200 rounded-lg">
-					<RenderTable orders={orders} 
-					visibleColumns={visibleColumns}
-					/>
+					<OrderTable orders={orders} visibleColumns={visibleColumns} />
 				</div>
 			) : (
 				<div className="text-center py-20">
@@ -325,926 +329,54 @@ console.log(orders)
 				</div>
 			)}
 			<Dialog open={showColumnManager} onOpenChange={setShowColumnManager}>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Manage Table Columns</DialogTitle>
-    </DialogHeader>
-    <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
-      {allColumns.map((col) => (
-        <label key={col.key} className="flex items-center gap-2">
-          <Checkbox
-            checked={tempVisibleColumns.includes(col.key)}
-            onCheckedChange={(checked) => {
-              if (checked) {
-                setTempVisibleColumns([...tempVisibleColumns, col.key]);
-              } else {
-                setTempVisibleColumns(
-                  tempVisibleColumns.filter((c) => c !== col.key)
-                );
-              }
-            }}
-          />
-          <span>{col.label}</span>
-        </label>
-      ))}
-    </div>
-    <div className="flex justify-end gap-3 mt-4">
-      <Button
-        variant="outline"
-        onClick={() => {
-          setShowColumnManager(false); // modal বন্ধ হবে
-        }}
-      >
-        Cancel
-      </Button>
-      <Button
-        onClick={() => {
-          setVisibleColumns(tempVisibleColumns); // apply করলে মূল state আপডেট হবে
-          setShowColumnManager(false);
-        }}
-      >
-        Apply
-      </Button>
-    </div>
-  </DialogContent>
-</Dialog>
-
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Manage Table Columns</DialogTitle>
+					</DialogHeader>
+					<div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
+						{allColumns.map((col) => (
+							<label key={col.key} className="flex items-center gap-2">
+								<Checkbox
+									checked={tempVisibleColumns.includes(col.key)}
+									onCheckedChange={(checked) => {
+										if (checked) {
+											setTempVisibleColumns([...tempVisibleColumns, col.key]);
+										} else {
+											setTempVisibleColumns(
+												tempVisibleColumns.filter((c) => c !== col.key)
+											);
+										}
+									}}
+								/>
+								<span>{col.label}</span>
+							</label>
+						))}
+					</div>
+					<div className="flex justify-end gap-3 mt-4">
+						<Button
+							variant="outline"
+							onClick={() => {
+								setShowColumnManager(false); // modal বন্ধ হবে
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={() => {
+								setVisibleColumns(tempVisibleColumns); // apply করলে মূল state আপডেট হবে
+								setShowColumnManager(false);
+							}}
+						>
+							Apply
+						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</section>
 	);
 };
 
-const RenderTable = ({ orders ,visibleColumns}: { orders: OrderProps[],visibleColumns: string[] }) => {
-	const { user } = useAuth();
-	const { loading, totalPages, page, setPage } = useOrders();
-	const { staff } = useStaff();
-	const { checkCoupon } = useCoupons();
-	const [orderViewDialogId, setOrderViewDialogId] = useState<number | null>(
-		null
-	);
-	const [deleteDialogOpenId, setDeleteDialogOpenId] = useState<number | null>(
-		null
-	);
-	const [orderTotalCouponCheckedPrices, setOrderTotalCouponCheckedPrices] =
-		useState<Record<number, number>>({});
-
-	const getCouponCheckedPrice = async (
-		couponId: number,
-		orderTotalPrice: number
-	): Promise<number> => {
-		try {
-			// Maybe show loading spinner here manually if you want
-			const result = await checkCoupon(couponId, orderTotalPrice);
-			return result.discountedPrice ?? orderTotalPrice; // If no discount, fallback
-		} catch (err: any) {
-			console.error(err.message);
-			return orderTotalPrice; // Fallback to original price on error
-		}
-	};
-
-	useEffect(() => {
-		orders.forEach(async (order) => {
-			// Assuming each order might have a couponId and you want to call for all
-			if (order.couponId) {
-				const couponAppliedPrice = await getCouponCheckedPrice(
-					order.couponId,
-					order.orderTotalPrice
-				);
-				setOrderTotalCouponCheckedPrices((prev) => ({
-					...prev,
-					[order.orderId]: couponAppliedPrice,
-				}));
-			} else {
-				// If no coupon, just use normal total
-				setOrderTotalCouponCheckedPrices((prev) => ({
-					...prev,
-					[order.orderId]: order.orderTotalPrice,
-				}));
-			}
-		});
-	}, [orders]);
-console.log(orders)
-	return (
-		<div className="w-full border border-neutral-200 rounded-lg overflow-x-auto ">
-			<div className="w-full">
-				<Table className="border-collapse  w-full">
-				<TableCaption className="py-4 border border-t border-neutral-200">
-					Showing {orders.length} entries from
-					<div className="w-full text-black">
-						{totalPages > 1 && (
-							<AppPagination
-								page={page}
-								totalPages={totalPages}
-								onPageChange={setPage}
-							/>
-						)}
-					</div>
-				</TableCaption>
-				<TableHeader>
-  <TableRow className="bg-slate-100 hover:bg-slate-100">
-    <TableHead className="pl-5">
-      <Checkbox />
-    </TableHead>
-    {visibleColumns.includes("orderDate") && <TableHead>Order Date</TableHead>}
-    {visibleColumns.includes("orderId") && <TableHead>Order ID</TableHead>}
-    {visibleColumns.includes("customerName") && <TableHead>Customer Name</TableHead>}
-    {visibleColumns.includes("phone") && <TableHead>Phone</TableHead>}
-    {visibleColumns.includes("email") && <TableHead>Email</TableHead>}
-    {visibleColumns.includes("orderDetails") && <TableHead>Order Details</TableHead>}
-    {visibleColumns.includes("totalAmount") && <TableHead>Total Amount</TableHead>}
-    {visibleColumns.includes("advancePayment") && <TableHead>Advance Payment</TableHead>}
-    {visibleColumns.includes("due") && <TableHead>Due</TableHead>}
-    {visibleColumns.includes("paymentMethod") && <TableHead>Payment Method</TableHead>}
-    {visibleColumns.includes("paymentStatus") && <TableHead>Payment Status</TableHead>}
-    {visibleColumns.includes("deliveryMethod") && <TableHead>Delivery Method</TableHead>}
-    {visibleColumns.includes("billingAddress") && <TableHead>Billing Address</TableHead>}
-    {visibleColumns.includes("courier") && <TableHead>Courier</TableHead>}
-    {visibleColumns.includes("deliveryDate") && <TableHead>Exp. Delivery Date</TableHead>}
-    {visibleColumns.includes("status") && <TableHead>Order Status</TableHead>}
-    {visibleColumns.includes("method") && <TableHead>Order Mode</TableHead>}
-    {visibleColumns.includes("agent") && <TableHead>Agent</TableHead>}
-    {visibleColumns.includes("action") && <TableHead>Action</TableHead>}
-    {/* <TableHead className="w-[60px] pr-5">Actions</TableHead> */}
-  </TableRow>
-</TableHeader>
-{loading ? (
-  <LoadingOverlay visible={loading} zIndex={10} overlayProps={{ radius: "xs", blur: 1 }} />
-) : (
-  <TableBody>
-    {orders.map((order) => {
-      const staffInfo = staff.find((s) => s.staffId === order.staffId);
-      const advancePayment = order.payments?.[0]?.amount ?? 0;
-      const totalAmount = orderTotalCouponCheckedPrices[order.orderId] ?? 0;
-      const dueAmount = totalAmount - advancePayment;
-
-      return (
-        <TableRow key={order.orderId}>
-  <TableCell className="pl-5">
-    <Checkbox />
-  </TableCell>
-  {visibleColumns.includes("orderDate") && (
-    <TableCell>{new Date(order.createdAt).toDateString()}</TableCell>
-  )}
-  {visibleColumns.includes("orderId") && (
-    <TableCell>#{order.orderId}</TableCell>
-  )}
-  {visibleColumns.includes("customerName") && (
-    <TableCell>{order.customerName}</TableCell>
-  )}
-  {visibleColumns.includes("phone") && (
-    <TableCell>{order.customerPhone}</TableCell>
-  )}
-  {visibleColumns.includes("email") && (
-    <TableCell>{order.customerEmail}</TableCell>
-  )}
-  {visibleColumns.includes("orderDetails") && (
-    <TableCell
-														onClick={() => setOrderViewDialogId(order.orderId)}
-														className="text-sm underline"
-													>
-														
-														View details
-													</TableCell>
-  )}
-  {visibleColumns.includes("totalAmount") && (
-    <TableCell>{totalAmount.toLocaleString()} {currencyCode}</TableCell>
-  )}
-  {visibleColumns.includes("advancePayment") && (
-    <TableCell>{advancePayment.toLocaleString()} {currencyCode}</TableCell>
-  )}
-  {visibleColumns.includes("due") && (
-    <TableCell>{dueAmount.toLocaleString()} {currencyCode}</TableCell>
-  )}
-  {visibleColumns.includes("paymentMethod") && (
-    <TableCell>{order.paymentMethod === "cod-payment" ? "COD" : "Online"}</TableCell>
-  )}
-  {visibleColumns.includes("paymentStatus") && (
-    <TableCell>
-      <Badge
-        variant={
-          order.paymentStatus === "paid"
-            ? "success"
-            : order.paymentStatus === "partial"
-            ? "default"
-            : "destructive"
-        }
-        size="sm"
-      >
-        {order.paymentStatus}
-      </Badge>
-    </TableCell>
-  )}
-  {visibleColumns.includes("deliveryMethod") && (
-    <TableCell>{order.deliveryMethod}</TableCell>
-  )}
-  {visibleColumns.includes("billingAddress") && (
-    <TableCell title={order.billingAddress}>
-      <div className="truncate max-w-[150px]">
-        {order.billingAddress || "N/A"}
-      </div>
-    </TableCell>
-  )}
-  {visibleColumns.includes("courier") && (
-    <TableCell>{order.courierId || "N/A"}</TableCell>
-  )}
-  {visibleColumns.includes("deliveryDate") && (
-    <TableCell>
-      {order.deliveryDate ? new Date(order.deliveryDate).toDateString() : "N/A"}
-    </TableCell>
-  )}
-  {visibleColumns.includes("status") && (
-    <TableCell>
-      <Badge size="sm" variant={order.status as any}>
-        {order.status?.split("-").join(" ") || "N/A"}
-      </Badge>
-    </TableCell>
-  )}
-  {visibleColumns.includes("method") && (
-    <TableCell>
-      <Badge
-        size="sm"
-        variant={order.method === "online" ? "success" : "secondary"}
-      >
-        {order.method}
-      </Badge>
-    </TableCell>
-  )}
-  {visibleColumns.includes("agent") && (
-    <TableCell>
-      <div>{staffInfo?.name ?? "N/A"}</div>
-      <div className="text-xs text-gray-500">{staffInfo?.phone ?? "N/A"}</div>
-    </TableCell>
-  )}
-  {visibleColumns.includes("agent") && (
-    <TableCell>
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button variant="ghost">
-													<MoreHorizontal />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												<DropdownMenuLabel>Actions</DropdownMenuLabel>
-												<DropdownMenuSeparator />
-												<DropdownMenuGroup>
-													<DropdownMenuItem
-														onClick={() => setOrderViewDialogId(order.orderId)}
-													>
-														<Eye />
-														View
-													</DropdownMenuItem>
-	
-													{user?.role === "admin" && (
-													<DropdownMenuItem
-														className="text-rose-500"
-														onClick={() => setDeleteDialogOpenId(order.orderId)}
-													>
-														<Trash />
-														Delete
-													</DropdownMenuItem>
-												)}
-												</DropdownMenuGroup>
-											</DropdownMenuContent>
-										</DropdownMenu>
-	
-										<OrderViewDialog
-											order={order}
-											open={orderViewDialogId === order.orderId}
-											setOpen={setOrderViewDialogId}
-										/>
-										{/* <OrderDeleteDialog
-	
-									{/* product item delete dialog */}
-										{/* <ProductDeleteDialog
-									product={order}
-									deleteDialogOpenId={deleteDialogOpenId}
-									setDeleteDialogOpenId={setDeleteDialogOpenId}
-								/> */}
-									</TableCell>
-  )}
-  {/* <TableCell>Actions column remains always visible</TableCell> */}
-</TableRow>
-
-      );
-    })}
-  </TableBody>
-)}
-			</Table>
-			</div>
-		</div>
-	);
-};
-
-interface OrderDetailsFormProps {
-	deliveryDate: Date | null;
-	status:
-		| "order-request-received"
-		| "consultation-in-progress"
-		| "order-canceled"
-		| "awaiting-advance-payment"
-		| "advance-payment-received"
-		| "design-in-progress"
-		| "awaiting-design-approval"
-		| "production-started"
-		| "production-in-progress"
-		| "ready-for-delivery"
-		| "out-for-delivery"
-		| "order-completed";
-	courierAddress: string | null;
-	additionalNotes: string;
-}
-
-interface OrderViewDialogProps {
-	order: OrderProps;
-	open: boolean;
-	setOpen: React.Dispatch<React.SetStateAction<number | null>>;
-}
-
-const OrderViewDialog = ({ order, open, setOpen }: OrderViewDialogProps) => {
-	const { fetchOrder } = useOrders();
-	const { toast } = useToast();
-	const { staff } = useStaff();
-	const { checkCoupon } = useCoupons();
-	const { authToken } = useAuth();
-	const { couriers } = useCouriers();
-	const [loading, setLoading] = useDisclosure();
-	const [appliedCoupon, setAppliedCoupon] = useState<string>("N/A");
-	const [orderTotalCouponCheckedPrice, setOrderTotalCouponCheckedPrice] =
-		useState<number | null>(null);
-	const [selectedItem, setSelectedItem] = useState<any>(null);
-
-	if (!order) return null;
-
-	const getDeliveryDateStyle = (deliveryDate: string | null | undefined) => {
-		if (!deliveryDate) return "text-gray-400";
-
-		const date = new Date(deliveryDate);
-		if (!isValid(date)) return "text-gray-400";
-
-		const hoursUntilDelivery = differenceInHours(date, new Date());
-
-		if (hoursUntilDelivery <= 24) {
-			return "text-red-500 font-medium";
-		}
-		if (hoursUntilDelivery <= 48) {
-			return "text-orange-500 font-medium";
-		}
-		return "";
-	};
-
-	const [orderDetailsFormData, setOrderDetailFormData] =
-		useState<OrderDetailsFormProps>({
-			status: order.status,
-			deliveryDate: order.deliveryDate,
-			courierAddress: order.courierAddress,
-			additionalNotes: order.additionalNotes,
-		});
-
-	const [isEdited, setIsEdited] = useState(false);
-
-	const handleStatusChange = (newStatus: string) => {
-		// Add status update logic here
-		setOrderDetailFormData((prevData) => ({
-			...prevData,
-			status: newStatus as any,
-		}));
-		setIsEdited(true);
-	};
-
-	const handleDeliveryDateChange = (date: Date | undefined) => {
-		if (date) {
-			setOrderDetailFormData((prevData) => ({
-				...prevData,
-				deliveryDate: date,
-			}));
-			setIsEdited(true);
-		}
-	};
-
-	const handleAddressUpdate = (value: string) => {
-		setOrderDetailFormData((prevData) => ({
-			...prevData,
-			courierAddress: value,
-		}));
-		setIsEdited(true);
-	};
-
-	const handleNotesUpdate = (value: string) => {
-		setOrderDetailFormData((prevData) => ({
-			...prevData,
-			additionalNotes: value,
-		}));
-		setIsEdited(true);
-	};
-
-	const handleSave = async () => {
-		try {
-			setLoading.open();
-			if (!authToken) return;
-
-			const response = await orderService.updateOrder(
-				authToken,
-				order.orderId,
-				orderDetailsFormData.deliveryDate,
-				orderDetailsFormData.status,
-				orderDetailsFormData.courierAddress,
-				orderDetailsFormData.additionalNotes
-			);
-
-			if (response.status === 200) {
-				toast({
-					description: "Order updated successfully.",
-					variant: "success",
-					duration: 10000,
-				});
-
-				fetchOrder();
-			}
-		} catch (err: any) {
-			setLoading.close();
-			console.log(err.message);
-			toast({
-				description: err.message,
-				variant: "destructive",
-				duration: 10000,
-			});
-		} finally {
-			setLoading.close();
-		}
-	};
-
-	const orderStatuses = [
-		"order-request-received",
-		"consultation-in-progress",
-		"order-canceled",
-		"awaiting-advance-payment",
-		"advance-payment-received",
-		"design-in-progress",
-		"awaiting-design-approval",
-		"production-started",
-		"production-in-progress",
-		"ready-for-delivery",
-		"out-for-delivery",
-		"order-completed",
-	];
-
-	useEffect(() => {
-		const getCouponCheckedPrice = async (
-			couponId: number | null,
-			totalPrice: number
-		) => {
-			setOrderTotalCouponCheckedPrice(totalPrice);
-			if (!couponId) return;
-
-			try {
-				// Maybe show loading spinner here manually if you want
-				const result = await checkCoupon(couponId, totalPrice);
-				setOrderTotalCouponCheckedPrice(result.discountedPrice ?? totalPrice);
-				if (result.coupon) {
-					setAppliedCoupon(result.coupon.code);
-				}
-				// return result.discountedPrice ?? totalPrice; // If no discount, fallback
-			} catch (err: any) {
-				console.log(err.message);
-			}
-		};
-
-		getCouponCheckedPrice(order.couponId, order.orderTotalPrice);
-	}, [order]);
-
-	return (
-		<Dialog
-			open={open}
-			onOpenChange={(open) => {
-				setOpen(open ? order.orderId : null);
-			}}
-		>
-			<DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-				{loading && (
-					<>
-						<LoadingOverlay
-							visible={loading}
-							zIndex={10}
-							overlayProps={{ radius: "xs", blur: 1 }}
-							className="h-full min-h-[100vh] w-full"
-						/>
-					</>
-				)}
-
-				<DialogHeader className="flex flex-row items-start justify-between mt-4 mb-2">
-					<DialogTitle className="text-2xl font-bold">
-						Order #{order.orderId}
-					</DialogTitle>
-					<div className="flex gap-3 items-start">
-						<p className="font-bold">Agent: </p>
-						<div className="w-full flex flex-col gap-1 text-right">
-							<p className=" text-sm">
-								{staff.filter(
-									(staffItem) => staffItem.staffId === order.staffId
-								)[0]?.name ?? "Unassigned"}
-							</p>
-							<p className=" text-sm">
-								{staff.filter(
-									(staffItem) => staffItem.staffId === order.staffId
-								)[0]?.phone ?? "N/A"}
-							</p>
-						</div>
-					</div>
-				</DialogHeader>
-
-				<div className="space-y-6">
-					<div className="grid grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<div className="flex items-center gap-2 ">
-								<Clock className="h-4 w-4" />
-								<span>Order Date:</span>
-								<span className="font-medium text-black">
-									{new Date(order.createdAt).toDateString()}
-								</span>
-							</div>
-							<div className="flex items-center gap-2 ">
-								<CalendarIcon className="h-4 w-4" />
-								<span>Est. Delivery:</span>
-								{orderDetailsFormData.deliveryDate ? (
-									<span className="font-medium text-black">
-										{new Date(orderDetailsFormData.deliveryDate).toDateString()}
-									</span>
-								) : (
-									<div className="flex gap-2 items-center">
-										<span className="text-gray-400">N/A</span>
-
-										<Popover>
-											<PopoverTrigger asChild>
-												<Button
-													variant="outline"
-													// size="sm"
-													className={cn(
-														order.deliveryDate &&
-															getDeliveryDateStyle(
-																new Date(order.deliveryDate).toDateString()
-															),
-														"font-normal"
-													)}
-												>
-													{order.deliveryDate &&
-														new Date(order.deliveryDate).toDateString()}
-													Set Date
-													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0" align="start">
-												<Calendar
-													mode="single"
-													// selected={new Date(order?.deliveryDate)}
-													onSelect={handleDeliveryDateChange}
-													initialFocus
-													disabled={(date) =>
-														date < new Date(new Date().setHours(0, 0, 0, 0))
-													}
-													className={cn("p-3 pointer-events-auto")}
-												/>
-											</PopoverContent>
-										</Popover>
-									</div>
-								
-								)}
-							</div>
-							<div className="flex items-center gap-2 ">
-								<Package className="h-4 w-4" />
-								<span>Status:</span>
-								<Select
-									defaultValue={orderDetailsFormData.status}
-									onValueChange={handleStatusChange}
-								>
-									<SelectTrigger className="w-max">
-										<SelectValue placeholder="Select status" />
-									</SelectTrigger>
-									<SelectContent className="h-max">
-										{orderStatuses.map((status) => (
-											<SelectItem key={status} value={status}>
-												{status.replace(/-/g, " ").toUpperCase()}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-						</div>
-
-						<div className="space-y-2">
-							<div className="flex items-center gap-2 ">
-								<Package className="h-4 w-4" />
-								<span>Payment Status:</span>
-								<Badge
-									variant={
-										order.paymentStatus === "paid"
-											? "success"
-											: order.paymentStatus === "pending"
-											? "destructive"
-											: "default"
-									}
-									size="sm"
-								>
-									{order.paymentStatus}
-								</Badge>
-							</div>
-							<div className="flex items-center gap-2 ">
-								<Package className="h-4 w-4" />
-								<span>Payment Method:</span>
-								<span className="font-medium text-black">
-									{order.paymentMethod.replace(/-/g, " ")}
-								</span>
-							</div>
-
-							<div className="flex items-center gap-2 ">
-								<Package className="h-4 w-4" />
-								<span>Coupon Applied:</span>
-								<span className="font-medium text-black">
-									{order.couponId ? (
-										<Badge size="sm" variant="success">
-											{appliedCoupon}
-										</Badge>
-									) : (
-										"N/A"
-									)}
-								</span>
-							</div>
-						</div>
-					</div>
-
-					<Separator className="bg-neutral-500/30" />
-
-					<div className="space-y-2">
-						<h3 className="text-lg font-semibold mb-2">Payment Details</h3>
-						<PaymentSection
-							order={order}
-							orderTotalCouponCheckedPrice={orderTotalCouponCheckedPrice}
-							// onPaymentSubmit={handlePaymentSubmit}
-						/>
-					</div>
-
-					<Separator className="bg-neutral-500/30" />
-
-					<div className="space-y-4">
-						<h3 className="text-lg font-semibold">Customer Information</h3>
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<div className="flex items-center gap-2 ">
-									<User className="h-4 w-4" />
-									<span>Name:</span>
-									<span className="font-medium text-black">
-										{order.customerName}
-									</span>
-								</div>
-								<div className="flex items-center gap-2 ">
-									<Mail className="h-4 w-4" />
-									<span>Email:</span>
-									<span className="font-medium text-black">
-										{order.customerEmail}
-									</span>
-								</div>
-								<div className="flex items-center gap-2 ">
-									<Phone className="h-4 w-4" />
-									<span>Phone:</span>
-									<span className="font-medium text-black">
-										{order.customerPhone}
-									</span>
-								</div>
-							</div>
-							<div className="space-y-4">
-								<div className="flex flex-col gap-2 ">
-									<div className="flex items-center gap-2 font-semibold">
-										<MapPin className="h-4 w-4" />
-										<span>Billing Address:</span>
-									</div>
-									<span className="text-neutral-600">
-										{order.billingAddress}
-									</span>
-								</div>
-								<div className="flex  gap-2 ">
-									<div className="flex items-center gap-2 font-semibold">
-										<MapPin className="h-4 w-4" />
-										<span>Shipping Address:</span>
-									</div>
-									<span className="text-neutral-600">
-										{order.deliveryMethod === "shop-pickup"
-											? "Shop Pickup"
-											: `${
-													order.deliveryMethod === "courier" &&
-													order.courierId &&
-													couriers.filter(
-														(courier) => courier.courierId === order.courierId
-													)[0]?.name
-											  }`}
-									</span>
-								</div>
-								{orderDetailsFormData.courierAddress && (
-									<EditableField
-										label="Courier Address"
-										value={orderDetailsFormData.courierAddress}
-										onSave={(value) => handleAddressUpdate(value)}
-									/>
-								)}
-							</div>
-						</div>
-					</div>
-
-					<Separator className="bg-neutral-500/30" />
-
-					<div className="space-y-4">
-						<h3 className="text-lg font-semibold">Order Items</h3>
-						<Table>
-							<TableBody>
-								{order.orderItems.map((item: OrderItemProps) => (
-									<TableRow
-										key={item.orderItemId}
-										className="cursor-pointer hover:bg-gray-50"
-										onClick={() => setSelectedItem(item)}
-									>
-										<TableCell>
-											<div className="flex items-center gap-4">
-												<div>
-													<p className="font-semibold truncate">
-														{item?.product?.name?.slice(0, 40) ||
-															item?.unlistedProduct?.name?.slice(0, 40)}
-														{item?.product
-															? item?.product?.name?.length > 40 && "..."
-															: item?.unlistedProduct
-															? item?.unlistedProduct?.name?.length > 40 &&
-															  "..."
-															: ""}
-													</p>
-													<div className="text-sm text-gray-500 mt-1">
-														SKU:{" "}
-														<span className="text-skyblue">
-															{item?.product?.sku || "N/A"}{" "}
-														</span>
-														{item?.productVariant &&
-															item?.productVariant?.variantDetails.map(
-																(detail: any) => (
-																	<span
-																		key={detail.productVariantDetailId}
-																		className="mr-2"
-																	>
-																		{detail.variationItem.variation.name}:{" "}
-																		{detail.variationItem.value}{" "}
-																		{detail.variationItem.variation.unit}{" "}
-																		{item.widthInch && item.heightInch && (
-																			<span className="text-xs text-neutral-600">
-																				{item.widthInch} inch x{" "}
-																				{item.heightInch} inch
-																			</span>
-																		)}
-																	</span>
-																)
-															)}
-													</div>
-												</div>
-											</div>
-										</TableCell>
-										<TableCell>
-											Qty: {item.quantity} (
-											{item.quantity > 1 ? "pieces" : "piece"})
-										</TableCell>
-										<TableCell>
-											Size:{" "}
-											{item.size
-												? `${item.size.toLocaleString()} sqfeet.`
-												: "N/A"}
-										</TableCell>
-										<TableCell className="text-right">
-											{Number(item.price).toLocaleString()}
-											{" " + currencyCode}
-										</TableCell>
-									</TableRow>
-								))}
-								<TableRow>
-									<TableCell className=""></TableCell>
-									<TableCell className=""></TableCell>
-									<TableCell>Coupon Applied: </TableCell>
-									<TableCell className="text-right">
-										-{" "}
-										{orderTotalCouponCheckedPrice
-											? (
-													order.orderTotalPrice - orderTotalCouponCheckedPrice
-											  ).toLocaleString()
-											: "Calculating"}
-										{" " + currencyCode}
-									</TableCell>
-								</TableRow>
-
-								<TableRow>
-									<TableCell className=""></TableCell>
-									<TableCell className=""></TableCell>
-									<TableCell>Total Price: </TableCell>
-									<TableCell className="text-right">
-										{orderTotalCouponCheckedPrice
-											? orderTotalCouponCheckedPrice.toLocaleString()
-											: "Calculating"}
-										{" " + currencyCode}
-									</TableCell>
-								</TableRow>
-							</TableBody>
-						</Table>
-					</div>
-
-					<Separator className="bg-neutral-500/30" />
-					<div className="space-y-2">
-						<EditableField
-							label="Additional Notes"
-							value={orderDetailsFormData.additionalNotes}
-							onSave={handleNotesUpdate}
-						/>
-					</div>
-
-					<Separator className="bg-neutral-500/30" />
-
-					<OrderImageSlider images={order.images} />
-				</div>
-
-				<DialogFooter className="flex justify-between">
-					<div className="w-full flex justify-end gap-4">
-						<Link to={`/invoice/${order.orderId}`} target="_blank">
-							<Button variant="outline" className="gap-2">
-								<ExternalLink />
-								View Invoice
-							</Button>
-						</Link>
-
-						<Button onClick={handleSave} disabled={!isEdited}>
-							Save
-						</Button>
-					</div>
-				</DialogFooter>
-
-				{selectedItem && (
-					<ProductDetailSheet
-						isOpen={!!selectedItem}
-						onClose={() => setSelectedItem(null)}
-						item={selectedItem}
-					/>
-				)}
-			</DialogContent>
-		</Dialog>
-	);
-};
-
-interface EditableFieldProps {
-	value: string;
-	label: string;
-	onSave: (value: string) => void;
-}
-
-const EditableField = ({ value, label, onSave }: EditableFieldProps) => {
-	const [isEditing, setIsEditing] = useState(false);
-	const [editValue, setEditValue] = useState(value);
-
-	const handleSave = () => {
-		onSave(editValue);
-		setIsEditing(false);
-	};
-
-	return (
-		<div className="space-y-2">
-			<div className="flex flex-col items-start justify-between gap-1">
-				<span className="font-semibold flex-grow">{label}:</span>
-				{isEditing ? (
-					<div className="w-full flex-grow space-y-3">
-						<Textarea
-							value={editValue}
-							onChange={(e) => setEditValue(e.target.value)}
-							className="min-h-[100px] w-full"
-						/>
-						<div className="flex gap-2">
-							<Button size="sm" onClick={handleSave}>
-								Save
-							</Button>
-							<Button
-								size="sm"
-								variant="outline"
-								onClick={() => setIsEditing(false)}
-							>
-								Cancel
-							</Button>
-						</div>
-					</div>
-				) : (
-					<div className="flex items-center justify-between w-full">
-						<p className="text-neutral-600 flex-grow">{value}</p>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="opacity-100"
-							onClick={() => setIsEditing(true)}
-						>
-							<Pen size={12} />
-							Edit
-						</Button>
-					</div>
-				)}
-			</div>
-		</div>
-	);
-};
-
+// Documentation: OrderImageSlider component displays a carousel of order-related images.
 const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
 	if (!images.length) return null;
 
@@ -1274,12 +406,6 @@ const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
 	);
 };
 
-interface PaymentSectionProps {
-	order: OrderProps;
-	orderTotalCouponCheckedPrice: number | null;
-	// onPaymentSubmit: (amount: number) => void;
-}
-
 interface PaymentFormProps {
 	orderId: number;
 	amount: number;
@@ -1289,10 +415,14 @@ interface PaymentFormProps {
 	customerPhone: string;
 }
 
+// Documentation: PaymentSection component displays payment details and allows for adding cash or online payments.
 const PaymentSection = ({
 	order,
 	orderTotalCouponCheckedPrice,
-}: PaymentSectionProps) => {
+}: {
+	order: OrderProps;
+	orderTotalCouponCheckedPrice: number | null;
+}) => {
 	const { toast } = useToast();
 	const { authToken } = useAuth();
 	const [loading, setLoading] = useDisclosure();
@@ -1437,7 +567,9 @@ const PaymentSection = ({
 													(payment) => !payment.isPaid && payment.paymentLink
 												).length > 0
 											) {
-												navigator.clipboard.writeText(
+												document.execCommand(
+													"copy",
+													false,
 													order.payments.filter(
 														(payment) => !payment.isPaid && payment.paymentLink
 													)[0].paymentLink as any
@@ -1457,7 +589,7 @@ const PaymentSection = ({
 
 						{/* STEP 2: Show input only if at least one payment is paid and not fully paid */}
 						{((order.payments.some(
-							(payment) => payment.isPaid && payment.paymentLink
+							(payment) => payment.isPaid || payment.paymentLink
 						) &&
 							order.payments
 								.filter((payment) => payment.isPaid || payment.paymentLink)
@@ -1540,186 +672,5 @@ const PaymentSection = ({
 		</div>
 	);
 };
-
-interface ProductDetailSheetProps {
-	isOpen: boolean;
-	onClose: () => void;
-	item: OrderItemProps;
-}
-
-const ProductDetailSheet = ({
-	isOpen,
-	onClose,
-	item,
-}: ProductDetailSheetProps) => {
-	return (
-		<Sheet open={isOpen} onOpenChange={onClose}>
-			<SheetContent>
-				<SheetHeader>
-					<SheetTitle>
-						{item?.product?.name || item?.unlistedProduct?.name}
-					</SheetTitle>
-					<SheetDescription>
-						{item?.unlistedProduct && (
-							<div className="w-full pb-3">
-								<p>{item?.unlistedProduct?.description}</p>
-							</div>
-						)}
-						SKU:{" "}
-						<span className="text-skyblue">{item?.product?.sku || "N/A"}</span>
-					</SheetDescription>
-				</SheetHeader>
-				<div className="mt-6 space-y-6">
-					<div className="space-y-2">
-						<h3 className="font-medium">Variation Details</h3>
-						{item?.productVariant &&
-							item?.productVariant?.variantDetails.map((detail) => (
-								<div
-									key={detail.productVariantDetailId}
-									className="flex justify-between text-sm"
-								>
-									<span className="text-gray-500">
-										{detail.variationItem.variation.name}
-									</span>
-									<span>
-										{detail.variationItem.value}{" "}
-										{detail.variationItem.variation.unit}
-									</span>
-								</div>
-							))}
-					</div>
-
-					<Separator className="bg-gray/50" />
-
-					<div className="space-y-2">
-						{item.size && (
-							<>
-								<div className="flex justify-between">
-									<span className="font-medium">Size</span>
-									<span className="text-base">
-										{item.size ? item.size.toLocaleString() + " sqfeet" : "N/A"}
-									</span>
-								</div>
-								<div className="flex justify-between">
-									<span className="font-medium">Width</span>
-									<span className="text-base">
-										{item.widthInch
-											? item.widthInch.toLocaleString() + " inch"
-											: "N/A"}
-									</span>
-								</div>
-
-								<div className="flex justify-between">
-									<span className="font-medium">Height</span>
-									<span className="text-base">
-										{item.heightInch
-											? item.heightInch.toLocaleString() + " inch"
-											: "N/A"}
-									</span>
-								</div>
-							</>
-						)}
-
-						<div className="flex justify-between">
-							<span className="font-medium">Quantity</span>
-							<span className="text-base">
-								{item.quantity}
-								{item.quantity > 1 ? " (pieces)" : " (piece)"}
-							</span>
-						</div>
-						<div className="flex justify-between">
-							<span className="font-medium">Price</span>
-							<span className="text-base font-semibold">
-								{Number(item.price).toLocaleString()}
-								{" " + currencyCode}
-							</span>
-						</div>
-					</div>
-				</div>
-			</SheetContent>
-		</Sheet>
-	);
-};
-
-interface OrderDeleteDialogProps {
-	order: OrderProps;
-	deleteDialogOpenId: number | null;
-	setDeleteDialogOpenId: React.Dispatch<React.SetStateAction<number | null>>;
-}
-
-const OrderDeleteDialog = ({
-	order,
-	deleteDialogOpenId,
-	setDeleteDialogOpenId,
-}: OrderDeleteDialogProps) => {
-	const { toast } = useToast();
-	const { authToken, logout } = useAuth();
-	const { loading, setLoading, fetchOrder } = useOrders();
-
-	const deleteOrder = async () => {
-		try {
-			setLoading(true);
-
-			if (!authToken) return logout();
-
-			const response = await orderService.deleteOrder(authToken, order.orderId);
-
-			toast({
-				description: response.message,
-				variant: response.status === 200 ? "success" : "default",
-				duration: 10000,
-			});
-
-			await fetchOrder();
-			return;
-		} catch (err: any) {
-			setLoading(false);
-			console.log(err.message);
-			toast({
-				description: err.message,
-				variant: "destructive",
-				duration: 10000,
-			});
-		}
-	};
-
-	return (
-		<AlertDialog
-			open={deleteDialogOpenId === order.orderId}
-			onOpenChange={(open) =>
-				setDeleteDialogOpenId(open ? order.orderId : null)
-			}
-		>
-			{loading && (
-				<>
-					<LoadingOverlay
-						visible={loading}
-						zIndex={10}
-						overlayProps={{ radius: "xs", blur: 1 }}
-					/>
-				</>
-			)}
-
-			<AlertDialogContent>
-				<AlertDialogHeader>
-					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This action cannot be undone. This product will no longer be
-						accessible by you or others.
-					</AlertDialogDescription>
-				</AlertDialogHeader>
-				<AlertDialogFooter>
-					<AlertDialogCancel>Cancel</AlertDialogCancel>
-					<Button variant="destructive" onClick={deleteOrder}>
-						Delete
-					</Button>
-				</AlertDialogFooter>
-			</AlertDialogContent>
-		</AlertDialog>
-	);
-};
-
-
-
 
 export default ActiveOrder;

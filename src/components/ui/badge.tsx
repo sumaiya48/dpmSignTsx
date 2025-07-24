@@ -1,8 +1,11 @@
+// Documentation: This component provides a customizable Badge UI element.
+// It supports various visual variants (default, secondary, destructive, outline, success)
+// and sizes (default, sm, lg) using Tailwind CSS for styling.
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
+// Documentation: Defines the styling variants for the Badge component using class-variance-authority.
 const badgeVariants = cva(
 	"inline-flex items-center border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2",
 	{
@@ -17,15 +20,15 @@ const badgeVariants = cva(
 				"order-request-received": "border-purple bg-purple-100 text-purple-600",
 				"consultation-in-progress":
 					"border-indigo bg-indigo-100 text-indigo-600",
-				"order-canceled": "border-rose bg-rose-100   text-rose-600",
+				"order-canceled": "border-rose bg-rose-100   text-rose-600",
 				"awaiting-advance-payment": "border-yellow bg-yellow/10 text-yellow",
-				"advance-payment-received": "border-green bg-green-100  text-green-600",
-				"design-in-progress": "border-pink bg-pink-100   text-pink-600",
-				"awaiting-design-approval": "border-teal bg-teal-100   text-teal-600",
+				"advance-payment-received": "border-green bg-green-100  text-green-600",
+				"design-in-progress": "border-pink bg-pink-100   text-pink-600",
+				"awaiting-design-approval": "border-teal bg-teal-100   text-teal-600",
 				"production-started": "border-orange bg-orange-100 text-orange-600",
-				"production-in-progress": "border-cyan bg-cyan-100   text-cyan-600",
-				"ready-for-delivery": "border-blue bg-blue-100   text-blue-600",
-				"out-for-delivery": "border-lime bg-lime-100   text-lime-600",
+				"production-in-progress": "border-cyan bg-cyan-100   text-cyan-600",
+				"ready-for-delivery": "border-blue bg-blue-100   text-blue-600",
+				"out-for-delivery": "border-lime bg-lime-100   text-lime-600",
 				"order-completed": "border-emerald bg-emerald-100 text-emerald-600",
 			},
 			size: {
@@ -40,19 +43,20 @@ const badgeVariants = cva(
 	}
 );
 
-interface BadgeProps
+export interface BadgeProps
 	extends React.HTMLAttributes<HTMLDivElement>,
 		VariantProps<typeof badgeVariants> {
 	className?: string;
 }
 
-const Badge = ({ className, variant, size, ...props }: BadgeProps) => {
+// Documentation: The Badge functional component renders a div with dynamic classes based on its variant and size props.
+function Badge({ className, variant, size, ...props }: BadgeProps) {
 	return (
 		<div
 			className={cn(badgeVariants({ variant, size }), className)}
 			{...props}
 		/>
 	);
-};
+}
 
 export { Badge, badgeVariants };
