@@ -112,15 +112,15 @@ import OrderTable from "./OrderTable";
 import OrderViewDialog from "./dialogs/OrderViewDialog";
 // Documentation: Corrected import path for OrderDeleteDialog to be relative to src/pages/order/dialogs.
 import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
-// Documentation: Corrected import path for ProductDetailSheet to be relative to src/pages/order/dialogs.
-import ProductDetailSheet from "./dialogs/ProductDetailSheet";
 // Documentation: EditableField is a generic UI component, so its path remains the same.
 import EditableField from "@/components/ui/EditableField";
 
 const ActiveOrder = () => {
 	const [showColumnManager, setShowColumnManager] = useState(false);
 	const [tempVisibleColumns, setTempVisibleColumns] = useState<string[]>([]);
-	const [visibleColumns, setVisibleColumns] = useState<string[]>([
+
+	// Documentation: Define default visible columns.
+	const defaultVisibleColumns = [
 		"orderDate",
 		"orderId",
 		"customerName",
@@ -140,7 +140,19 @@ const ActiveOrder = () => {
 		"method",
 		"agent",
 		"action",
-	]);
+	];
+
+	// Documentation: Initialize visibleColumns state by attempting to load from localStorage.
+	// If no saved preference is found, use the defaultVisibleColumns.
+	const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+		try {
+			const savedColumns = localStorage.getItem("activeOrderVisibleColumns");
+			return savedColumns ? JSON.parse(savedColumns) : defaultVisibleColumns;
+		} catch (error) {
+			console.error("Failed to parse visible columns from localStorage", error);
+			return defaultVisibleColumns;
+		}
+	});
 
 	const allColumns = [
 		{ key: "orderDate", label: "Order Date" },
@@ -192,6 +204,18 @@ const ActiveOrder = () => {
 			});
 		}
 	}, [error, toast]);
+
+	// Documentation: Effect to save visibleColumns to localStorage whenever it changes.
+	useEffect(() => {
+		try {
+			localStorage.setItem(
+				"activeOrderVisibleColumns",
+				JSON.stringify(visibleColumns)
+			);
+		} catch (error) {
+			console.error("Failed to save visible columns to localStorage", error);
+		}
+	}, [visibleColumns]);
 
 	// Debounce search Effect
 	useEffect(() => {

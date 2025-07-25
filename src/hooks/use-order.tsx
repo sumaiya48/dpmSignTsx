@@ -88,10 +88,10 @@ export interface OrderItemProps {
 			variationItemId: number;
 			variationItem: {
 				value: string;
-				variation: {
-					name: string;
-					unit: string;
-				};
+				// variation: {
+				// 	name: string;
+				// 	unit: string;
+				// };
 			};
 		}[];
 	};
@@ -185,17 +185,25 @@ const OrderProvider = ({
 			setError("Authentication token is missing.");
 			return;
 		}
-		// if (loading) return;
+		// Documentation: Log the user object to verify the role and other details
+		// when fetching orders. This helps confirm if the correct role is being sent to the backend.
+		console.log("Fetching orders for user:", user);
+
 		setLoading(true);
 		setError(null);
 		try {
+			// Documentation: Modified the API call to include the current user's role.
+			// This allows the backend to adjust its filtering logic for different roles.
+			// For example, the backend can be configured to return all orders for 'designer' roles,
+			// while still filtering by staffId for 'agent' roles.
 			const response = await orderService.fetchAllOrders(
 				authToken,
 				searchTerm,
 				searchBy,
 				filteredBy,
 				page,
-				limit
+				limit,
+				user?.role // New parameter: Pass the user's role to the backend
 			);
 
 			const updatedOrders = response.data.orders.map((item: OrderProps) => ({
@@ -216,7 +224,7 @@ const OrderProvider = ({
 		} finally {
 			setLoading(false);
 		}
-	}, [authToken, logout, searchTerm, filteredBy, page, limit]);
+	}, [authToken, logout, searchTerm, filteredBy, page, limit, user?.role]); // Added user?.role to dependency array
 
 	socket.on("create-order-request", () => {
 		fetchOrder();
@@ -236,7 +244,7 @@ const OrderProvider = ({
 		if (authToken) {
 			fetchOrder(); // wait for orders to actually come
 		}
-	}, [authToken, location, searchTerm, filteredBy, page, limit]);
+	}, [authToken, location, searchTerm, filteredBy, page, limit, fetchOrder]); // Added fetchOrder to dependency array
 
 	// Memoize the context value to avoid unnecessary re-renders.
 	const value = useMemo(
@@ -259,7 +267,7 @@ const OrderProvider = ({
 			error,
 			fetchOrder,
 		}),
-		[orders, loading, error, searchTerm, filteredBy, page, limit]
+		[orders, loading, error, searchTerm, filteredBy, page, limit, fetchOrder] // Added fetchOrder to dependency array
 	);
 
 	return (

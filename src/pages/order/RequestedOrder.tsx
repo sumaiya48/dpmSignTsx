@@ -76,6 +76,9 @@ const RequestedOrder = () => {
 
 	// Documentation: Sets the filter for requested orders. This effect runs only once on component mount
 	// to prevent re-fetching and potential table flickering issues.
+	// IMPORTANT: If orders placed from POS are not appearing, ensure the POS assigns an initial status
+	// that maps to "requested" (e.g., "order-request-received") in the backend, and that the `useOrders`
+	// hook correctly filters by this status.
 	useEffect(() => {
 		setFilteredBy("requested");
 	}, [setFilteredBy]);

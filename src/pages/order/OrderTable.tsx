@@ -107,6 +107,15 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 		setDeleteDialogOpenId(order.orderId);
 	};
 
+	// Documentation: Debugging log to check the user role and orders data.
+	// If the table is not showing for specific roles (e.g., 'designer'),
+	// the issue is likely in the `useOrders` hook or the backend API
+	// where data is fetched or filtered based on user roles.
+	useEffect(() => {
+		console.log("Current User Role in OrderTable:", user?.role);
+		console.log("Orders received by OrderTable (count):", orders.length);
+	}, [user, orders]);
+
 	return (
 		<div className="w-full border border-neutral-200 rounded-lg overflow-x-auto">
 			<Table className="border-collapse w-full">
@@ -204,7 +213,10 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 										</TableCell>
 									)}
 									{visibleColumns.includes("orderId") && (
-										<TableCell>#{order.orderId}</TableCell>
+										<TableCell>
+											{/* Documentation: Display orderId with "DPM-" prefix. */}
+											DPM-{order.orderId}
+										</TableCell>
 									)}
 									{visibleColumns.includes("customerName") && (
 										<TableCell>{order.customerName}</TableCell>
