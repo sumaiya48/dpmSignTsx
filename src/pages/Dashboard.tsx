@@ -150,13 +150,15 @@ const Dashboard = () => {
 			colorScheme: { bg: "bg-teal-100", text: "text-teal-600" },
 		},
 		{
-			title: "Total Earnings",
-			value: `${(
-				stats.earnings?.[stats.earnings.length - 1]?.total || 0
-			).toLocaleString()} ${currencyCode}`,
-			icon: DollarSign,
-			colorScheme: { bg: "bg-amber-100", text: "text-amber-600" },
-		},
+  title: "Total Earnings",
+  value: `${stats.recentOrders
+    ?.reduce((total, order) => total + order.orderTotalPrice, 0)
+    .toLocaleString()} ${currencyCode}`,
+  icon: DollarSign,
+  colorScheme: { bg: "bg-amber-100", text: "text-amber-600" },
+}
+
+
 	];
 
 	return (

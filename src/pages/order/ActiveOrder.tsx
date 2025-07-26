@@ -76,7 +76,7 @@ import { useFormValidation } from "@/hooks/use-form-validation";
 import {
 	OrderImageProps,
 	OrderItemProps,
-	OrderProps,
+	OrderProps, // Ensure OrderProps is imported
 	useOrders,
 } from "@/hooks/use-order";
 import { useStaff } from "@/hooks/use-staff";
@@ -104,15 +104,11 @@ import {
 	Trash,
 	User,
 } from "lucide-react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState, useMemo } from "react"; // Import useMemo
 import { Link } from "react-router-dom";
-// Documentation: Corrected import path for OrderTable to be a sibling component within src/pages/order.
 import OrderTable from "./OrderTable";
-// Documentation: Corrected import path for OrderViewDialog to be relative to src/pages/order/dialogs.
 import OrderViewDialog from "./dialogs/OrderViewDialog";
-// Documentation: Corrected import path for OrderDeleteDialog to be relative to src/pages/order/dialogs.
 import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
-// Documentation: EditableField is a generic UI component, so its path remains the same.
 import EditableField from "@/components/ui/EditableField";
 
 const ActiveOrder = () => {
@@ -139,11 +135,11 @@ const ActiveOrder = () => {
 		"status",
 		"method",
 		"agent",
+		"commission", // Make sure 'commission' is here
 		"action",
 	];
 
 	// Documentation: Initialize visibleColumns state by attempting to load from localStorage.
-	// If no saved preference is found, use the defaultVisibleColumns.
 	const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
 		try {
 			const savedColumns = localStorage.getItem("activeOrderVisibleColumns");
@@ -173,11 +169,12 @@ const ActiveOrder = () => {
 		{ key: "status", label: "Order Status" },
 		{ key: "method", label: "Order Mode" },
 		{ key: "agent", label: "Agent" },
+		{ key: "commission", label: "Commission" }, // FIX: Changed from "commissionPercentage" to "commission"
 		{ key: "action", label: "Action" },
 	];
 
 	const {
-		orders,
+		orders, // Original orders from useOrders
 		setSearchTerm,
 		searchBy,
 		setSearchBy,
@@ -186,11 +183,10 @@ const ActiveOrder = () => {
 		error,
 	} = useOrders();
 	const [searchValue, setSearchValue] = useState<string>("");
-	const { staff } = useStaff();
+	const { staff } = useStaff(); // Get staff data from useStaff
 	const { toast } = useToast();
+	const { checkCoupon } = useCoupons(); // Assuming this is needed for totalAmount calculation
 
-	// Documentation: Sets the filter for active orders. This effect runs only once on component mount
-	// to prevent re-fetching and potential table flickering issues.
 	useEffect(() => {
 		setFilteredBy("active");
 	}, [setFilteredBy]);
@@ -205,7 +201,6 @@ const ActiveOrder = () => {
 		}
 	}, [error, toast]);
 
-	// Documentation: Effect to save visibleColumns to localStorage whenever it changes.
 	useEffect(() => {
 		try {
 			localStorage.setItem(
@@ -217,17 +212,79 @@ const ActiveOrder = () => {
 		}
 	}, [visibleColumns]);
 
-	// Debounce search Effect
 	useEffect(() => {
 		const handler = setTimeout(() => {
-			setSearchTerm(searchValue); // Only update context after delay
-		}, 500); // Delay of 500ms
+			setSearchTerm(searchValue);
+		}, 500);
 
-		return () => clearTimeout(handler); // Cleanup on each change
+		return () => clearTimeout(handler);
 	}, [searchValue, setSearchTerm]);
 
+    // State to hold coupon-checked prices, used for calculating commission
+    const [orderTotalCouponCheckedPrices, setOrderTotalCouponCheckedPrices] =
+        useState<Record<number, number>>({});
+
+    const getCouponCheckedPrice = async (
+        couponId: number,
+        orderTotalPrice: number
+    ): Promise<number> => {
+        try {
+            const result = await checkCoupon(couponId, orderTotalPrice);
+            return result.discountedPrice ?? orderTotalPrice; // If no discount, fallback
+        } catch (err: any) {
+            console.error(err.message);
+            return orderTotalPrice; // Fallback to original price on error
+        }
+    };
+
+    // Effect to calculate coupon-checked prices for recent orders
+    useEffect(() => {
+        if (orders && orders.length > 0) {
+            const newPrices: Record<number, number> = {};
+            const fetchPromises = orders.map(async (order) => {
+                if (order.couponId) {
+                    const couponAppliedPrice = await getCouponCheckedPrice(
+                        order.couponId,
+                        order.orderTotalPrice
+                    );
+                    newPrices[order.orderId] = couponAppliedPrice;
+                } else {
+                    newPrices[order.orderId] = order.orderTotalPrice;
+                }
+            });
+
+            Promise.all(fetchPromises).then(() => {
+                setOrderTotalCouponCheckedPrices(newPrices);
+            });
+        } else if (orders && orders.length === 0) {
+            setOrderTotalCouponCheckedPrices({});
+        }
+    }, [orders, checkCoupon]);
+
+
+	// NEW: Memoize orders with calculated commission and coupon-checked total price
+	const ordersWithCalculatedData = useMemo(() => {
+		if (!orders || !staff) return []; // Ensure orders and staff data are available
+
+		return orders.map((order) => {
+			const agent = staff.find((s) => s.staffId === order.staffId);
+            const totalAmountAfterCoupon = orderTotalCouponCheckedPrices[order.orderId] ?? order.orderTotalPrice;
+
+			const commissionAmount = agent
+				? (totalAmountAfterCoupon * agent.commissionPercentage) / 100
+				: 0; // Calculate commission
+
+			return {
+				...order,
+				commissionAmount: commissionAmount, // Add the calculated commission
+				agentCommissionPercentage: agent?.commissionPercentage, // Optionally add percentage for display
+                orderTotalPrice: totalAmountAfterCoupon // Override orderTotalPrice with the coupon-checked one for consistency
+			};
+		});
+	}, [orders, staff, orderTotalCouponCheckedPrices]); // Re-calculate when orders, staff, or coupon prices change
+
 	const handleExport = (format: "excel" | "csv") => {
-		const worksheetData = orders.map((order) => ({
+		const worksheetData = ordersWithCalculatedData.map((order) => ({ // Use ordersWithCalculatedData
 			ID: order.orderId,
 			"Customer Name": order.customerName,
 			"Customer Email": order.customerEmail,
@@ -240,7 +297,7 @@ const ActiveOrder = () => {
 						} piece), ${item.size ? "(" + item.size + " sq. feet)" : ""}`
 				)
 				.join(", "),
-			"Total Amount": order.orderTotalPrice,
+			"Total Amount": order.orderTotalPrice, // This will now be the coupon-checked amount
 			"Payment Method": order.paymentMethod,
 			"Payment Status": order.paymentStatus,
 			"Delivery Method": order.deliveryMethod,
@@ -253,6 +310,8 @@ const ActiveOrder = () => {
 			"Agent Number":
 				staff.filter((staffItem) => staffItem.staffId === order.staffId)[0]
 					?.phone ?? "N/A",
+			"Commission Amount": order.commissionAmount, // Add commission to export
+			"Commission Percentage": order.agentCommissionPercentage, // Add percentage to export
 			"Date Added": new Date(order.createdAt).toDateString(),
 		}));
 
@@ -301,7 +360,7 @@ const ActiveOrder = () => {
 			</Header>
 
 			{/* filter options */}
-			{orders.length > 0 && (
+			{orders.length > 0 && ( // Use original orders.length for initial check
 				<div className="w-full flex items-center justify-between  gap-4">
 					<div className="flex items-center justify-between gap-3">
 						<Button variant="success" onClick={() => handleExport("excel")}>
@@ -332,7 +391,7 @@ const ActiveOrder = () => {
 						<Button
 							variant="outline"
 							onClick={() => {
-								setTempVisibleColumns(visibleColumns); // modal খোলার সময় copy রাখবে
+								setTempVisibleColumns(visibleColumns); // modal খোলার সময় copy রাখবে
 								setShowColumnManager(true);
 							}}
 						>
@@ -343,9 +402,10 @@ const ActiveOrder = () => {
 			)}
 
 			{/* orders tabs */}
-			{orders.length > 0 ? (
+			{orders.length > 0 ? ( // Use original orders.length for initial check
 				<div className="w-full border border-neutral-200 rounded-lg">
-					<OrderTable orders={orders} visibleColumns={visibleColumns} />
+					{/* Pass the enriched ordersWithCalculatedData to OrderTable */}
+					<OrderTable orders={ordersWithCalculatedData} visibleColumns={visibleColumns} />
 				</div>
 			) : (
 				<div className="text-center py-20">

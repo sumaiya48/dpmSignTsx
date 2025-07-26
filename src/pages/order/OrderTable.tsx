@@ -28,23 +28,30 @@ import { AppPagination } from "@/components/ui/app-pagination";
 import { LoadingOverlay } from "@mantine/core";
 import { currencyCode } from "@/config";
 import { useOrders, OrderProps } from "@/hooks/use-order";
-import { useStaff } from "@/hooks/use-staff";
+import { useStaff } from "@/hooks/use-staff"; // Make sure useStaff is imported
 import { useCoupons } from "@/hooks/use-coupon";
 import { useAuth } from "@/hooks/use-auth";
-// Documentation: Corrected import path for OrderViewDialog to be relative to src/pages/order/dialogs.
 import OrderViewDialog from "./dialogs/OrderViewDialog";
-// Documentation: Corrected import path for OrderDeleteDialog to be relative to src/pages/order/dialogs.
 import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
 
+// Extend OrderProps to include the calculated commission amount
+// This interface should ideally be defined where OrderProps is defined (e.g., use-order.tsx)
+// but for immediate use here, we'll define it locally.
+// If you already added commissionAmount to OrderProps in use-order.tsx, you can remove this local interface.
+interface OrderWithCommissionProps extends OrderProps {
+    commissionAmount?: number;
+    agentCommissionPercentage?: number;
+}
+
 interface OrderTableProps {
-	orders: OrderProps[];
+	orders: OrderWithCommissionProps[]; // Use the extended interface
 	visibleColumns: string[];
 }
 
 const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 	const { user } = useAuth();
 	const { loading, totalPages, page, setPage } = useOrders();
-	const { staff } = useStaff();
+	const { staff } = useStaff(); // Get staff data here
 	const { checkCoupon } = useCoupons();
 	const [orderViewDialogId, setOrderViewDialogId] = useState<number | null>(
 		null
@@ -55,11 +62,8 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 	const [orderTotalCouponCheckedPrices, setOrderTotalCouponCheckedPrices] =
 		useState<Record<number, number>>({});
 
-	// Documentation: State to hold the currently selected order for viewing or deletion.
 	const [selectedOrder, setSelectedOrder] = useState<OrderProps | null>(null);
 
-	// Documentation: Fetches the discounted price if a coupon is applied to an order.
-	// This function is memoized to avoid unnecessary re-calculations.
 	const getCouponCheckedPrice = async (
 		couponId: number,
 		orderTotalPrice: number
@@ -73,44 +77,42 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 		}
 	};
 
-	// Documentation: Calculates and stores the coupon-applied prices for each order.
-	// This effect runs whenever the 'orders' data or 'checkCoupon' function changes.
 	useEffect(() => {
-		orders.forEach(async (order) => {
-			if (order.couponId) {
-				const couponAppliedPrice = await getCouponCheckedPrice(
-					order.couponId,
-					order.orderTotalPrice
-				);
-				setOrderTotalCouponCheckedPrices((prev) => ({
-					...prev,
-					[order.orderId]: couponAppliedPrice,
-				}));
-			} else {
-				setOrderTotalCouponCheckedPrices((prev) => ({
-					...prev,
-					[order.orderId]: order.orderTotalPrice,
-				}));
-			}
-		});
-	}, [orders, checkCoupon]);
+		// Only process if orders is available and not empty
+		if (orders && orders.length > 0) {
+			const newPrices: Record<number, number> = {};
+			const fetchPromises = orders.map(async (order) => {
+				if (order.couponId) {
+					const couponAppliedPrice = await getCouponCheckedPrice(
+						order.couponId,
+						order.orderTotalPrice
+					);
+					newPrices[order.orderId] = couponAppliedPrice;
+				} else {
+					newPrices[order.orderId] = order.orderTotalPrice;
+				}
+			});
 
-	// Documentation: Handles opening the OrderViewDialog for a specific order.
+			// Wait for all coupon price calculations to complete
+			Promise.all(fetchPromises).then(() => {
+				setOrderTotalCouponCheckedPrices(newPrices);
+			});
+		} else if (orders && orders.length === 0) {
+            // If there are no orders, clear the prices
+            setOrderTotalCouponCheckedPrices({});
+        }
+	}, [orders, checkCoupon]); // Re-run when orders or checkCoupon changes
+
 	const handleViewOrder = (order: OrderProps) => {
 		setSelectedOrder(order);
 		setOrderViewDialogId(order.orderId);
 	};
 
-	// Documentation: Handles opening the OrderDeleteDialog for a specific order.
 	const handleDeleteOrder = (order: OrderProps) => {
 		setSelectedOrder(order);
 		setDeleteDialogOpenId(order.orderId);
 	};
 
-	// Documentation: Debugging log to check the user role and orders data.
-	// If the table is not showing for specific roles (e.g., 'designer'),
-	// the issue is likely in the `useOrders` hook or the backend API
-	// where data is fetched or filtered based on user roles.
 	useEffect(() => {
 		console.log("Current User Role in OrderTable:", user?.role);
 		console.log("Orders received by OrderTable (count):", orders.length);
@@ -136,7 +138,6 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 						<TableHead className="pl-5">
 							<Checkbox />
 						</TableHead>
-						{/* Documentation: Dynamically renders table headers based on the 'visibleColumns' prop. */}
 						{visibleColumns.includes("orderDate") && (
 							<TableHead>Order Date</TableHead>
 						)}
@@ -183,6 +184,8 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 							<TableHead>Order Mode</TableHead>
 						)}
 						{visibleColumns.includes("agent") && <TableHead>Agent</TableHead>}
+						{/* NEW: Commission Table Head */}
+						{visibleColumns.includes("commission") && <TableHead>Commission</TableHead>}
 						{visibleColumns.includes("action") && <TableHead>Action</TableHead>}
 					</TableRow>
 				</TableHeader>
@@ -201,12 +204,16 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 								orderTotalCouponCheckedPrices[order.orderId] ?? 0;
 							const dueAmount = totalAmount - advancePayment;
 
+							// Calculate commission for the current order
+                            const commissionRate = staffInfo?.commissionPercentage || 0;
+                            // Use the totalAmount (which is coupon-checked price) for commission calculation
+                            const commissionAmount = (totalAmount * commissionRate) / 100;
+
 							return (
 								<TableRow key={order.orderId}>
 									<TableCell className="pl-5">
 										<Checkbox />
 									</TableCell>
-									{/* Documentation: Dynamically renders table cells based on the 'visibleColumns' prop. */}
 									{visibleColumns.includes("orderDate") && (
 										<TableCell>
 											{new Date(order.createdAt).toDateString()}
@@ -214,7 +221,6 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 									)}
 									{visibleColumns.includes("orderId") && (
 										<TableCell>
-											{/* Documentation: Display orderId with "DPM-" prefix. */}
 											DPM-{order.orderId}
 										</TableCell>
 									)}
@@ -229,7 +235,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 									)}
 									{visibleColumns.includes("orderDetails") && (
 										<TableCell
-											onClick={() => handleViewOrder(order)} // Changed to use handleViewOrder
+											onClick={() => handleViewOrder(order)}
 											className="text-sm underline cursor-pointer"
 										>
 											View details
@@ -318,12 +324,19 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 											</div>
 										</TableCell>
 									)}
+									{/* NEW: Commission Cell */}
+									{visibleColumns.includes("commission") && (
+                    <TableCell>
+                        {(order.commissionAmount ?? 0).toLocaleString()} {currencyCode}
+                        <div className="text-xs text-neutral-500">
+                            ({(order.agentCommissionPercentage ?? 0)}%)
+                        </div>
+                    </TableCell>
+                )}
 									{visibleColumns.includes("action") && (
 										<TableCell>
-											{/* Documentation: DropdownMenu for actions. */}
 											<DropdownMenu>
 												<DropdownMenuTrigger asChild>
-													{/* Documentation: The "..." button for actions. */}
 													<Button variant="ghost">
 														<MoreHorizontal />
 													</Button>
@@ -333,7 +346,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 													<DropdownMenuSeparator />
 													<DropdownMenuGroup>
 														<DropdownMenuItem
-															onClick={() => handleViewOrder(order)} // Changed to use handleViewOrder
+															onClick={() => handleViewOrder(order)}
 														>
 															<Eye />
 															View
@@ -341,7 +354,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 														{user?.role === "admin" && (
 															<DropdownMenuItem
 																className="text-rose-500"
-																onClick={() => handleDeleteOrder(order)} // Changed to use handleDeleteOrder
+																onClick={() => handleDeleteOrder(order)}
 															>
 																<Trash />
 																Delete
@@ -359,7 +372,6 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 				)}
 			</Table>
 
-			{/* Documentation: OrderViewDialog and OrderDeleteDialog are now rendered conditionally outside the map loop. */}
 			{selectedOrder && orderViewDialogId === selectedOrder.orderId && (
 				<OrderViewDialog
 					order={selectedOrder}
