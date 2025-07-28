@@ -188,7 +188,7 @@ const OrderViewDialog = ({ order, open, setOpen }: OrderViewDialogProps) => {
 
 		getCouponCheckedPrice(order.couponId, order.orderTotalPrice);
 	}, [order, checkCoupon]);
-
+console.log(order)
 	return (
 		<Dialog
 			open={open}
@@ -206,7 +206,7 @@ const OrderViewDialog = ({ order, open, setOpen }: OrderViewDialogProps) => {
 			<DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
 				<DialogHeader className="flex flex-row items-start justify-between mt-4 mb-2">
 					<DialogTitle className="text-2xl font-bold">
-						Order #{order.orderId}
+						Order : DPM-{order.orderId}
 					</DialogTitle>
 					<div className="flex gap-3 items-start">
 						<p className="font-bold">Agent:</p>

@@ -34,7 +34,7 @@ import ProductReviewProvider from "@/hooks/use-product-review";
 import CouponProvider from "@/hooks/use-coupon";
 import RequestedOrder from "@/pages/order/RequestedOrder";
 import ProductProvider from "@/hooks/use-product";
-import OrderProvider from "@/hooks/use-order";
+import OrderProvider from "@/hooks/use-order"; // Import OrderProvider
 import MediaProvider from "@/hooks/use-media";
 import Blog from "@/pages/Blog";
 import BlogProvider from "@/hooks/use-blog";
@@ -52,408 +52,407 @@ import CancelledOrder from "@/pages/order/CancelledOrder";
 import DashboardProvider from "@/hooks/use-dashboard";
 
 const App = () => {
-	const [loading, setLoading] = useState<boolean>(true);
-	const checkAPIHeartBeat = async () => {
-		setLoading(true);
-		try {
-			const response = await ping();
-			if (response.status === 200) {
-				setLoading(false);
-			}
-		} catch (err: any) {
-			console.error(err.message);
-		}
-	};
+    const [loading, setLoading] = useState<boolean>(true);
+    const checkAPIHeartBeat = async () => {
+        setLoading(true);
+        try {
+            const response = await ping();
+            if (response.status === 200) {
+                setLoading(false);
+            }
+        } catch (err: any) {
+            console.error(err.message);
+        }
+    };
 
-	useEffect(() => {
-		checkAPIHeartBeat();
-	}, []);
+    useEffect(() => {
+        checkAPIHeartBeat();
+    }, []);
 
-	return (
-		<>
-			<MantineProvider>
-				{loading ? (
-					<>
-						<Preloader />
-					</>
-				) : (
-					<>
-						<Router>
-							<AuthProvider>
-								<Layout>
-									<Routes>
-										<Route
-											path={routes.auth.path}
-											element={
-												<ProtectedRoute
-													isPublic
-													redirectPath={routes.dashboard.path}
-												>
-													<Auth />
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.dashboard.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<DashboardProvider>
-														<CouponProvider>
-															<Dashboard />
-														</CouponProvider>
-													</DashboardProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.pos.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<StaffProvider>
-														<CourierProvider>
-															<ProductProvider>
-																<CartProvider>
-																	<POS />
-																</CartProvider>
-															</ProductProvider>
-														</CourierProvider>
-													</StaffProvider>
-												</ProtectedRoute>
-											}
-										/>
+    return (
+        <>
+            <MantineProvider>
+                {loading ? (
+                    <>
+                        <Preloader />
+                    </>
+                ) : (
+                    <>
+                        <Router>
+                            <AuthProvider>
+                                {/* Wrap all routes that might need OrderProvider inside it */}
+                                <OrderProvider> {/* NEW: OrderProvider added here */}
+                                    <Layout>
+                                        <Routes>
+                                            <Route
+                                                path={routes.auth.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic
+                                                        redirectPath={routes.dashboard.path}
+                                                    >
+                                                        <Auth />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.dashboard.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <DashboardProvider>
+                                                            <CouponProvider>
+                                                                <Dashboard />
+                                                            </CouponProvider>
+                                                        </DashboardProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.pos.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <StaffProvider>
+                                                            <CourierProvider>
+                                                                <ProductProvider>
+                                                                    <CartProvider>
+                                                                        <POS />
+                                                                    </CartProvider>
+                                                                </ProductProvider>
+                                                            </CourierProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={"/invoice/:orderId"}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<OrderProvider initialFilteredBy="all">
-														<StaffProvider>
-															<CouponProvider>
-																<CourierProvider>
-																	<Invoice />
-																</CourierProvider>
-															</CouponProvider>
-														</StaffProvider>
-													</OrderProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={"/invoice/:orderId"}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* OrderProvider is already here for Invoice */}
+                                                        <StaffProvider>
+                                                            <CouponProvider>
+                                                                <CourierProvider>
+                                                                    <Invoice />
+                                                                </CourierProvider>
+                                                            </CouponProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.order.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<OrderProvider initialFilteredBy="active">
-														<StaffProvider>
-															<CouponProvider>
-																<CourierProvider>
-																	<ActiveOrder />
-																</CourierProvider>
-															</CouponProvider>
-														</StaffProvider>
-													</OrderProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.order.requested.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<OrderProvider initialFilteredBy="requested">
-														<StaffProvider>
-															<CouponProvider>
-																<CourierProvider>
-																	<RequestedOrder />
-																</CourierProvider>
-															</CouponProvider>
-														</StaffProvider>
-													</OrderProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={routes.order.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* OrderProvider is already here */}
+                                                        <StaffProvider>
+                                                            <CouponProvider>
+                                                                <CourierProvider>
+                                                                    <ActiveOrder />
+                                                                </CourierProvider>
+                                                            </CouponProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.order.requested.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* OrderProvider is already here */}
+                                                        <StaffProvider>
+                                                            <CouponProvider>
+                                                                <CourierProvider>
+                                                                    <RequestedOrder />
+                                                                </CourierProvider>
+                                                            </CouponProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.order.completed.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<OrderProvider initialFilteredBy="completed">
-														<StaffProvider>
-															<CouponProvider>
-																<CourierProvider>
-																	<CompletedOrder />
-																</CourierProvider>
-															</CouponProvider>
-														</StaffProvider>
-													</OrderProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={routes.order.completed.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* OrderProvider is already here */}
+                                                        <StaffProvider>
+                                                            <CouponProvider>
+                                                                <CourierProvider>
+                                                                    <CompletedOrder />
+                                                                </CourierProvider>
+                                                            </CouponProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.order.cancelled.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<OrderProvider initialFilteredBy="cancelled">
-														<StaffProvider>
-															<CouponProvider>
-																<CourierProvider>
-																	<CancelledOrder />
-																</CourierProvider>
-															</CouponProvider>
-														</StaffProvider>
-													</OrderProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={routes.order.cancelled.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* OrderProvider is already here */}
+                                                        <StaffProvider>
+                                                            <CouponProvider>
+                                                                <CourierProvider>
+                                                                    <CancelledOrder />
+                                                                </CourierProvider>
+                                                            </CouponProvider>
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.product.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<ProductProvider>
-														<CategoryProvider>
-															<Product />
-														</CategoryProvider>
-													</ProductProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.product.add.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<ProductProvider>
-														<CategoryProvider>
-															<AddProduct />
-														</CategoryProvider>
-													</ProductProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.product.review.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<ProductReviewProvider>
-														<ProductReview />
-													</ProductReviewProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.product.category.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<CategoryProvider>
-														<Category />
-													</CategoryProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.coupon.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<CouponProvider>
-														<CategoryProvider>
-															<Coupon />
-														</CategoryProvider>
-													</CouponProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={routes.product.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <ProductProvider>
+                                                            <CategoryProvider>
+                                                                <Product />
+                                                            </CategoryProvider>
+                                                        </ProductProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.product.add.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <ProductProvider>
+                                                            <CategoryProvider>
+                                                                <AddProduct />
+                                                            </CategoryProvider>
+                                                        </ProductProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.product.review.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <ProductReviewProvider>
+                                                            <ProductReview />
+                                                        </ProductReviewProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.product.category.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <CategoryProvider>
+                                                            <Category />
+                                                        </CategoryProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.coupon.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <CouponProvider>
+                                                            <CategoryProvider>
+                                                                <Coupon />
+                                                            </CategoryProvider>
+                                                        </CouponProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.transaction.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<TransactionProvider>
-														<Transaction />
-													</TransactionProvider>
-												</ProtectedRoute>
-											}
-										/>
+                                            <Route
+                                                path={routes.transaction.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <TransactionProvider>
+                                                            <Transaction />
+                                                        </TransactionProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
 
-										<Route
-											path={routes.customer.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<CustomerProvider>
-														<Customer />
-													</CustomerProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.staff.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<StaffProvider>
-														<Staff />
-													</StaffProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.inquery.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<InqueryProvider>
-														<Inquery />
-													</InqueryProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.media.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<MediaProvider>
-														<Media />
-													</MediaProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.newsletter.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<NewsletterProvider>
-														<Newsletter />
-													</NewsletterProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.faq.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<FaqProvider>
-														<FAQ />
-													</FaqProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.blog.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<BlogProvider>
-														<Blog />
-													</BlogProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.job.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<JobProvider>
-														<Job />
-													</JobProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path={routes.courier.path}
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<CourierProvider>
-														<Courier />
-													</CourierProvider>
-												</ProtectedRoute>
-											}
-										/>
-										<Route
-											path="*"
-											element={
-												<ProtectedRoute
-													isPublic={false}
-													redirectPath={routes.auth.path}
-												>
-													<DashboardProvider>
-														<CouponProvider>
-															<Dashboard />
-														</CouponProvider>
-													</DashboardProvider>
-												</ProtectedRoute>
-											}
-										/>
-									</Routes>
-								</Layout>
-							</AuthProvider>
-						</Router>
-					</>
-				)}
-			</MantineProvider>
-		</>
-	);
+                                            <Route
+                                                path={routes.customer.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <CustomerProvider>
+                                                            <Customer />
+                                                        </CustomerProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.staff.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        {/* StaffProvider is already here */}
+                                                        <StaffProvider>
+                                                            <Staff />
+                                                        </StaffProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.inquery.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <InqueryProvider>
+                                                            <Inquery />
+                                                        </InqueryProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.media.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <MediaProvider>
+                                                            <Media />
+                                                        </MediaProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.newsletter.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <NewsletterProvider>
+                                                            <Newsletter />
+                                                        </NewsletterProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.faq.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <FaqProvider>
+                                                            <FAQ />
+                                                        </FaqProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.blog.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <BlogProvider>
+                                                            <Blog />
+                                                        </BlogProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.job.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <JobProvider>
+                                                            <Job />
+                                                        </JobProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path={routes.courier.path}
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <CourierProvider>
+                                                            <Courier />
+                                                        </CourierProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="*"
+                                                element={
+                                                    <ProtectedRoute
+                                                        isPublic={false}
+                                                        redirectPath={routes.auth.path}
+                                                    >
+                                                        <DashboardProvider>
+                                                            <CouponProvider>
+                                                                <Dashboard />
+                                                            </CouponProvider>
+                                                        </DashboardProvider>
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                        </Routes>
+                                    </Layout>
+                                </OrderProvider> {/* NEW: Closes OrderProvider here */}
+                            </AuthProvider>
+                        </Router>
+                    </>
+                )}
+            </MantineProvider>
+        </>
+    );
 };
 
 export default App;
