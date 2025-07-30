@@ -190,8 +190,8 @@ const Invoice = () => {
 						</div>
 						{/* Invoice Details */}
 						<div className="text-right flex flex-col items-end">
-							<h2 className="text-blue-600 font-bold text-3xl">INVOICE</h2> {/* Adjusted color */}
-							<p className="text-blue-600 font-medium text-xl">DPM-{currentOrder.orderId}</p> {/* Adjusted color */}
+							<h2 className="text-[#3871C2]  text-3xl font-semibold ">INVOICE</h2> {/* Adjusted color */}
+							<p className=" font-bold text-xl">DPM-{currentOrder.orderId}</p> {/* Adjusted color */}
 							<p className="text-sm mt-2 text-gray-700"> {/* Adjusted color */}
 								Order Date:{" "}
 								{new Date(currentOrder.createdAt).toLocaleDateString("en-GB")}
@@ -264,7 +264,7 @@ const Invoice = () => {
 							<h3 className="text-base font-bold mb-2 text-gray-800 ">Order Details</h3>
 							<table className="w-full table-auto border-collapse text-sm">
 								<thead>
-									<tr className="bg-blue-600 text-white"> {/* Blue header as per image */}
+									<tr className="bg-[#3871C2] text-white"> {/* Blue header as per image */}
 										<th className="border border-blue-700 p-2 text-center w-[5%]">NO</th>
 										<th className="border border-blue-700 p-2 text-left w-[40%]">DESCRIPTION</th>
 										<th className="border border-blue-700 p-2 text-center w-[15%]">QTY/SQ. FT.</th>
@@ -332,30 +332,30 @@ const Invoice = () => {
 							<table className="w-1/3 table-auto border-collapse text-sm"> {/* Half width */}
 								<tbody>
 									<tr className="bg-gray-50">
-										<td className=" p-2 text-right font-bold">Sub Total:</td>
-										<td className=" p-2 text-right">
+										<td className=" px-2 text-right font-bold">Sub Total:</td>
+										<td className=" px-2 text-right">
 											{subTotal.toLocaleString()} {currencyCode}
 										</td>
 									</tr>
 									<tr className="bg-white">
-										<td className=" p-2 text-right font-bold">Design Charge:</td>
-										<td className=" p-2 text-right">
+										<td className=" px-2 text-right font-bold">Design Charge:</td>
+										<td className=" px-2 text-right">
 											{designCharge.toLocaleString()} {currencyCode}
 										</td>
 									</tr>
 									<tr className="bg-gray-50">
-										<td className=" p-2 text-right font-bold">Installation Charge:</td>
-										<td className=" p-2 text-right">
+										<td className=" px-2 text-right font-bold">Installation Charge:</td>
+										<td className=" px-2 text-right">
 											{installationCharge.toLocaleString()} {currencyCode}
 										</td>
 									</tr>
-									<tr className="bg-white">
-										<td className=" p-2 text-right font-bold">Discount:</td>
-										<td className="p-2 text-right">
-											- {discountAmount.toLocaleString()} {currencyCode}
+									<tr className="bg-white mb-2 ">
+										<td className=" px-2 text-right font-bold">Discount:</td>
+										<td className="px-2 text-right">
+											{discountAmount.toLocaleString()} {currencyCode}
 										</td>
 									</tr>
-									<tr className="bg-blue-600 text-white font-bold text-lg"> {/* Highlighted Grand Total */}
+									<tr className="bg-[#3871C2] pt-2 text-white font-bold text-lg"> {/* Highlighted Grand Total */}
 										<td className="border border-blue-700 px-2 text-right">GRAND TOTAL:</td>
 										<td className="border border-blue-700 px-2 text-right">
 											{grandTotal.toLocaleString()} {currencyCode}
@@ -371,7 +371,7 @@ const Invoice = () => {
 								<h3 className="text-base font-bold mb-2 text-gray-800">Payment Details</h3>
 								<table className="w-full table-auto border-collapse text-sm">
 									<thead>
-										<tr className="bg-blue-600 text-white"> {/* Blue header */}
+										<tr className="bg-[#3871C2] text-white"> {/* Blue header */}
 											<th className="border border-blue-700 p-2 text-left w-1/3">Payment Method</th>
 											<th className="border border-blue-700 p-2 text-right w-1/3">Amount Paid</th>
 											<th className="border border-blue-700 p-2 text-right w-1/3">Amount Due</th>
