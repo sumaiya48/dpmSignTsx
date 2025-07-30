@@ -2,7 +2,7 @@
 // It shows product details, quantity, size, and price, and calculates total price with coupon application.
 import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 import { OrderItemProps, OrderProps } from "@/hooks/use-order"; // Assuming OrderItemProps and OrderProps are imported
 import { currencyCode } from "@/config";
 // Documentation: Corrected import path for ProductDetailSheet to be relative to src/pages/order/dialogs.

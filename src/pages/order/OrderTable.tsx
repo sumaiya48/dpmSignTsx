@@ -205,9 +205,9 @@ const OrderTable: React.FC<OrderTableProps> = ({ orders, visibleColumns }) => {
 							const dueAmount = totalAmount - advancePayment;
 
 							// Calculate commission for the current order
-                            const commissionRate = staffInfo?.commissionPercentage || 0;
+                            // const commissionRate = staffInfo?.commissionPercentage || 0;
                             // Use the totalAmount (which is coupon-checked price) for commission calculation
-                            const commissionAmount = (totalAmount * commissionRate) / 100;
+                            // const commissionAmount = (totalAmount * commissionRate) / 100;
 
 							return (
 								<TableRow key={order.orderId}>

@@ -17,7 +17,7 @@ import {
 	generateNumericUUID,
 } from "@/lib/utils";
 import { currencyCode } from "@/config";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useCart } from "@/hooks/use-cart";
 

@@ -180,7 +180,8 @@ const CartPanel = () => {
 					checkoutFormData.couponId,
 					checkoutFormData.amount,
 					orderSummary.total,
-					checkoutFormData.orderItems
+					checkoutFormData.orderItems,
+					
 				);
 
 				if (response.status === 201) {

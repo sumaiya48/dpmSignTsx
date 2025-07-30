@@ -69,7 +69,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useOrders, OrderProps } from "@/hooks/use-order"; // Import useOrders
+import { useOrders } from "@/hooks/use-order"; // Import useOrders
 
 // Extend StaffProps to include calculated total commission
 interface StaffWithCommissionProps extends StaffProps {

@@ -1,47 +1,47 @@
 // Documentation: This component displays a list of active orders, allowing users to search, filter, export, and manage visible table columns. It also includes functionality to view and update order details, and delete orders (for admin users).
-import { orderService } from "@/api";
+// import { orderService } from "@/api";
 import Header from "@/components/header";
-import {
-	AlertDialog,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { AppPagination } from "@/components/ui/app-pagination";
-import { Badge } from "@/components/ui/badge";
+// import {
+// 	AlertDialog,
+// 	AlertDialogCancel,
+// 	AlertDialogContent,
+// 	AlertDialogDescription,
+// 	AlertDialogFooter,
+// 	AlertDialogHeader,
+// 	AlertDialogTitle,
+// } from "@/components/ui/alert-dialog";
+// import { AppPagination } from "@/components/ui/app-pagination";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-} from "@/components/ui/carousel";
+// import { Calendar } from "@/components/ui/calendar";
+// import {
+// 	Carousel,
+// 	CarouselContent,
+// 	CarouselItem,
+// } from "@/components/ui/carousel";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
-	DialogFooter,
+	// DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+// 	DropdownMenu,
+// 	DropdownMenuContent,
+// 	DropdownMenuGroup,
+// 	DropdownMenuItem,
+// 	DropdownMenuLabel,
+// 	DropdownMenuSeparator,
+// 	DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+// import {
+// 	Popover,
+// 	PopoverContent,
+// 	PopoverTrigger,
+// } from "@/components/ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -50,66 +50,66 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTitle,
-} from "@/components/ui/sheet";
-import {
-	Table,
-	TableBody,
-	TableCaption,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
-import { currencyCode } from "@/config";
-import { useAuth } from "@/hooks/use-auth";
+// import { Separator } from "@/components/ui/separator";
+// import {
+// 	Sheet,
+// 	SheetContent,
+// 	SheetDescription,
+// 	SheetHeader,
+// 	SheetTitle,
+// } from "@/components/ui/sheet";
+// import {
+// 	Table,
+// 	TableBody,
+// 	TableCaption,
+// 	TableCell,
+// 	TableHead,
+// 	TableHeader,
+// 	TableRow,
+// // } from "@/components/ui/table";
+// import { Textarea } from "@/components/ui/textarea";
+// import { currencyCode } from "@/config";
+// import { useAuth } from "@/hooks/use-auth";
 import { useCoupons } from "@/hooks/use-coupon";
-import { useCouriers } from "@/hooks/use-courier";
-import { useFormValidation } from "@/hooks/use-form-validation";
+// import { useCouriers } from "@/hooks/use-courier";
+// import { useFormValidation } from "@/hooks/use-form-validation";
 import {
-	OrderImageProps,
-	OrderItemProps,
-	OrderProps, // Ensure OrderProps is imported
+	// OrderImageProps,
+	// OrderItemProps,
+	// OrderProps, // Ensure OrderProps is imported
 	useOrders,
 } from "@/hooks/use-order";
 import { useStaff } from "@/hooks/use-staff";
 import { useToast } from "@/hooks/use-toast";
-import { cn, createCSV, createExcelSheet } from "@/lib/utils";
-import { LoadingOverlay } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { differenceInHours, isValid } from "date-fns";
+import {  createCSV, createExcelSheet } from "@/lib/utils";
+// import { LoadingOverlay } from "@mantine/core";
+// import { useDisclosure } from "@mantine/hooks";
+// import { differenceInHours, isValid } from "date-fns";
 import {
-	CalendarIcon,
-	Clipboard,
-	Clock,
-	ExternalLink,
-	Eye,
+	// CalendarIcon,
+	// Clipboard,
+	// Clock,
+	// ExternalLink,
+	// Eye,
 	FileSpreadsheet,
 	FileText,
-	Mail,
-	MapPin,
-	MoreHorizontal,
-	Package,
-	Pen,
-	Phone,
+	// Mail,
+	// MapPin,
+	// MoreHorizontal,
+	// Package,
+	// Pen,
+	// Phone,
 	Search,
 	Settings,
-	Trash,
-	User,
+	// Trash,
+	// User,
 } from "lucide-react";
-import { ChangeEvent, useEffect, useState, useMemo } from "react"; // Import useMemo
-import { Link } from "react-router-dom";
+import {  useEffect, useState, useMemo } from "react"; // Import useMemo
+// import { Link } from "react-router-dom";
 import OrderTable from "./OrderTable";
-import OrderViewDialog from "./dialogs/OrderViewDialog";
-import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
-import EditableField from "@/components/ui/EditableField";
+// import OrderViewDialog from "./dialogs/OrderViewDialog";
+// import OrderDeleteDialog from "./dialogs/OrderDeleteDialog";
+// import EditableField from "@/components/ui/EditableField";
 
 const ActiveOrder = () => {
 	const [showColumnManager, setShowColumnManager] = useState(false);
@@ -461,300 +461,300 @@ const ActiveOrder = () => {
 };
 
 // Documentation: OrderImageSlider component displays a carousel of order-related images.
-const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
-	if (!images.length) return null;
+// const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
+// 	if (!images.length) return null;
 
-	return (
-		<div className="w-full">
-			<h3 className="text-lg font-semibold mb-4">Order Images</h3>
-			<Carousel className="w-full">
-				<CarouselContent>
-					{images.map((image, index) => (
-						<CarouselItem key={index} className="md:basis-1/4">
-							<div className="p-1">
-								<div className="rounded-lg overflow-hidden aspect-square">
-									<img
-										src={image.imageUrl}
-										alt={`Order item ${index + 1}`}
-										className="w-full h-full object-cover"
-									/>
-								</div>
-							</div>
-						</CarouselItem>
-					))}
-				</CarouselContent>
-				{/* <CarouselPrevious />
-				<CarouselNext /> */}
-			</Carousel>
-		</div>
-	);
-};
+// 	return (
+// 		<div className="w-full">
+// 			<h3 className="text-lg font-semibold mb-4">Order Images</h3>
+// 			<Carousel className="w-full">
+// 				<CarouselContent>
+// 					{images.map((image, index) => (
+// 						<CarouselItem key={index} className="md:basis-1/4">
+// 							<div className="p-1">
+// 								<div className="rounded-lg overflow-hidden aspect-square">
+// 									<img
+// 										src={image.imageUrl}
+// 										alt={`Order item ${index + 1}`}
+// 										className="w-full h-full object-cover"
+// 									/>
+// 								</div>
+// 							</div>
+// 						</CarouselItem>
+// 					))}
+// 				</CarouselContent>
+// 				{/* <CarouselPrevious />
+// 				<CarouselNext /> */}
+// 			</Carousel>
+// 		</div>
+// 	);
+// };
 
-interface PaymentFormProps {
-	orderId: number;
-	amount: number;
-	paymentMethod: "online-payment" | "cod-payment";
-	customerName: string;
-	customerEmail: string;
-	customerPhone: string;
-}
+// interface PaymentFormProps {
+// 	orderId: number;
+// 	amount: number;
+// 	paymentMethod: "online-payment" | "cod-payment";
+// 	customerName: string;
+// 	customerEmail: string;
+// 	customerPhone: string;
+// }
 
 // Documentation: PaymentSection component displays payment details and allows for adding cash or online payments.
-const PaymentSection = ({
-	order,
-	orderTotalCouponCheckedPrice,
-}: {
-	order: OrderProps;
-	orderTotalCouponCheckedPrice: number | null;
-}) => {
-	const { toast } = useToast();
-	const { authToken } = useAuth();
-	const [loading, setLoading] = useDisclosure();
-	const [dueAmount, _setDueAmount] = useState<number>(
-		order.orderTotalPrice -
-			order.payments.reduce((acc, curr) => acc + curr.amount, 0)
-	);
+// const PaymentSection = ({
+// 	order,
+// 	orderTotalCouponCheckedPrice,
+// }: {
+// 	order: OrderProps;
+// 	orderTotalCouponCheckedPrice: number | null;
+// }) => {
+// 	const { toast } = useToast();
+// 	const { authToken } = useAuth();
+// 	const [loading, setLoading] = useDisclosure();
+// 	const [dueAmount, _setDueAmount] = useState<number>(
+// 		order.orderTotalPrice -
+// 			order.payments.reduce((acc, curr) => acc + curr.amount, 0)
+// 	);
 
-	const [paymentFormData, setPaymentFormData] = useState<PaymentFormProps>({
-		orderId: order.orderId,
-		amount: dueAmount,
-		paymentMethod: order.paymentMethod,
-		customerName: order.customerName,
-		customerEmail: order.customerEmail,
-		customerPhone: order.customerPhone,
-	});
-	const { validateForm, errors } = useFormValidation();
+// 	const [paymentFormData, setPaymentFormData] = useState<PaymentFormProps>({
+// 		orderId: order.orderId,
+// 		amount: dueAmount,
+// 		paymentMethod: order.paymentMethod,
+// 		customerName: order.customerName,
+// 		customerEmail: order.customerEmail,
+// 		customerPhone: order.customerPhone,
+// 	});
+// 	const { validateForm, errors } = useFormValidation();
 
-	const handleChange = (
-		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		const { value } = e.target;
+// 	const handleChange = (
+// 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+// 	) => {
+// 		const { value } = e.target;
 
-		if (order.payments.length > 0) {
-			return;
-		}
+// 		if (order.payments.length > 0) {
+// 			return;
+// 		}
 
-		setPaymentFormData((prevData) => ({
-			...prevData,
-			amount: Number(value),
-		}));
-	};
+// 		setPaymentFormData((prevData) => ({
+// 			...prevData,
+// 			amount: Number(value),
+// 		}));
+// 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		try {
-			setLoading.open();
-			e.preventDefault();
+// 	const handleSubmit = async (e: React.FormEvent) => {
+// 		try {
+// 			setLoading.open();
+// 			e.preventDefault();
 
-			if (
-				paymentFormData.amount > 0 &&
-				validateForm(paymentFormData, orderService.paymentCreationSchema)
-			) {
-				if (!authToken) return;
-				console.log(paymentFormData);
+// 			if (
+// 				paymentFormData.amount > 0 &&
+// 				validateForm(paymentFormData, orderService.paymentCreationSchema)
+// 			) {
+// 				if (!authToken) return;
+// 				console.log(paymentFormData);
 
-				// const response = await orderService.createPayment(
-				// 	authToken,
-				// 	paymentFormData.amount,
-				// 	paymentFormData.orderId,
-				// 	paymentFormData.paymentMethod,
-				// 	paymentFormData.customerName,
-				// 	paymentFormData.customerEmail,
-				// 	paymentFormData.customerPhone
-				// );
+// 				// const response = await orderService.createPayment(
+// 				// 	authToken,
+// 				// 	paymentFormData.amount,
+// 				// 	paymentFormData.orderId,
+// 				// 	paymentFormData.paymentMethod,
+// 				// 	paymentFormData.customerName,
+// 				// 	paymentFormData.customerEmail,
+// 				// 	paymentFormData.customerPhone
+// 				// );
 
-				// if (response.status === 201) {
-				// 	toast({
-				// 		description: "Payment request created successfully.",
-				// 		variant: "success",
-				// 		duration: 10000,
-				// 	});
+// 				// if (response.status === 201) {
+// 				// 	toast({
+// 				// 		description: "Payment request created successfully.",
+// 				// 		variant: "success",
+// 				// 		duration: 10000,
+// 				// 	});
 
-				// 	fetchOrder();
-				// }
-			}
-		} catch (err: any) {
-			setLoading.close();
-			console.log(err.message);
-			toast({
-				description: err.message,
-				variant: "destructive",
-				duration: 10000,
-			});
-		} finally {
-			setLoading.close();
-		}
-	};
+// 				// 	fetchOrder();
+// 				// }
+// 			}
+// 		} catch (err: any) {
+// 			setLoading.close();
+// 			console.log(err.message);
+// 			toast({
+// 				description: err.message,
+// 				variant: "destructive",
+// 				duration: 10000,
+// 			});
+// 		} finally {
+// 			setLoading.close();
+// 		}
+// 	};
 
-	const suggestedPayment = Math.floor(order.orderTotalPrice * 0.25); // 25% of total amount
+// 	const suggestedPayment = Math.floor(order.orderTotalPrice * 0.25); // 25% of total amount
 
-	return (
-		<div className="bg-gray-50 py-4 rounded-lg">
-			<div className="space-y-4">
-				<div className="grid gap-4 md:grid-cols-2">
-					<div>
-						<p className="text-sm mb-1">Total Order Amount</p>
-						<p className="font-semibold text-lg">
-							{orderTotalCouponCheckedPrice
-								? orderTotalCouponCheckedPrice.toLocaleString()
-								: "Calculating"}
-							{" " + currencyCode}
-							{orderTotalCouponCheckedPrice !== order.orderTotalPrice && (
-								<span className="text-sm text-neutral-500">
-									{" "}
-									({order.orderTotalPrice.toLocaleString()}
-									{" " + currencyCode})
-								</span>
-							)}
-						</p>
-					</div>
-					{order.payments.length > 0 ? (
-						<div className="flex flex-col gap-2">
-							<div>
-								<p className="text-sm mb-1">Payment History</p>
-								{order.payments.map((payment) => (
-									<p key={payment.paymentId} className="text-sm space-y-1">
-										<span className="font-semibold text-lg">
-											{payment.isPaid
-												? `Paid ${payment.amount.toLocaleString()} ${currencyCode} `
-												: `Pending ${payment.amount.toLocaleString()} ${currencyCode} `}
-										</span>
-										at {new Date(payment.createdAt).toDateString()}
-									</p>
-								))}
-							</div>
-						</div>
-					) : (
-						<div>
-							<p className="text-sm  mb-1">Suggested Initial Payment (25%)</p>
-							<p className="font-semibold text-lg">
-								{suggestedPayment.toLocaleString()}
-								{" " + currencyCode}
-							</p>
-						</div>
-					)}
-				</div>
+// 	return (
+// 		<div className="bg-gray-50 py-4 rounded-lg">
+// 			<div className="space-y-4">
+// 				<div className="grid gap-4 md:grid-cols-2">
+// 					<div>
+// 						<p className="text-sm mb-1">Total Order Amount</p>
+// 						<p className="font-semibold text-lg">
+// 							{orderTotalCouponCheckedPrice
+// 								? orderTotalCouponCheckedPrice.toLocaleString()
+// 								: "Calculating"}
+// 							{" " + currencyCode}
+// 							{orderTotalCouponCheckedPrice !== order.orderTotalPrice && (
+// 								<span className="text-sm text-neutral-500">
+// 									{" "}
+// 									({order.orderTotalPrice.toLocaleString()}
+// 									{" " + currencyCode})
+// 								</span>
+// 							)}
+// 						</p>
+// 					</div>
+// 					{order.payments.length > 0 ? (
+// 						<div className="flex flex-col gap-2">
+// 							<div>
+// 								<p className="text-sm mb-1">Payment History</p>
+// 								{order.payments.map((payment) => (
+// 									<p key={payment.paymentId} className="text-sm space-y-1">
+// 										<span className="font-semibold text-lg">
+// 											{payment.isPaid
+// 												? `Paid ${payment.amount.toLocaleString()} ${currencyCode} `
+// 												: `Pending ${payment.amount.toLocaleString()} ${currencyCode} `}
+// 										</span>
+// 										at {new Date(payment.createdAt).toDateString()}
+// 									</p>
+// 								))}
+// 							</div>
+// 						</div>
+// 					) : (
+// 						<div>
+// 							<p className="text-sm  mb-1">Suggested Initial Payment (25%)</p>
+// 							<p className="font-semibold text-lg">
+// 								{suggestedPayment.toLocaleString()}
+// 								{" " + currencyCode}
+// 							</p>
+// 						</div>
+// 					)}
+// 				</div>
 
-				{order.paymentMethod === "online-payment" && (
-					<>
-						{/* STEP 1: Show payment link only if no payment is paid */}
-						{order.payments.length > 0 &&
-							order.payments.some((payment) => !payment.isPaid) && (
-								<div className="space-y-1">
-									<p className="text-sm mb-1">
-										Customer has not paid yet. Copy the link below and complete
-										the payment.
-									</p>
-									<Button
-										onClick={() => {
-											if (
-												order.payments.filter(
-													(payment) => !payment.isPaid && payment.paymentLink
-												).length > 0
-											) {
-												document.execCommand(
-													"copy",
-													false,
-													order.payments.filter(
-														(payment) => !payment.isPaid && payment.paymentLink
-													)[0].paymentLink as any
-												);
-												toast({
-													description: "Payment link copied to clipboard.",
-													variant: "success",
-													duration: 10000,
-												});
-											}
-										}}
-									>
-										<Clipboard /> Copy Payment Link
-									</Button>
-								</div>
-							)}
+// 				{order.paymentMethod === "online-payment" && (
+// 					<>
+// 						{/* STEP 1: Show payment link only if no payment is paid */}
+// 						{order.payments.length > 0 &&
+// 							order.payments.some((payment) => !payment.isPaid) && (
+// 								<div className="space-y-1">
+// 									<p className="text-sm mb-1">
+// 										Customer has not paid yet. Copy the link below and complete
+// 										the payment.
+// 									</p>
+// 									<Button
+// 										onClick={() => {
+// 											if (
+// 												order.payments.filter(
+// 													(payment) => !payment.isPaid && payment.paymentLink
+// 												).length > 0
+// 											) {
+// 												document.execCommand(
+// 													"copy",
+// 													false,
+// 													order.payments.filter(
+// 														(payment) => !payment.isPaid && payment.paymentLink
+// 													)[0].paymentLink as any
+// 												);
+// 												toast({
+// 													description: "Payment link copied to clipboard.",
+// 													variant: "success",
+// 													duration: 10000,
+// 												});
+// 											}
+// 										}}
+// 									>
+// 										<Clipboard /> Copy Payment Link
+// 									</Button>
+// 								</div>
+// 							)}
 
-						{/* STEP 2: Show input only if at least one payment is paid and not fully paid */}
-						{((order.payments.some(
-							(payment) => payment.isPaid || payment.paymentLink
-						) &&
-							order.payments
-								.filter((payment) => payment.isPaid || payment.paymentLink)
-								.reduce((acc, curr) => acc + curr.amount, 0) <
-								order.orderTotalPrice) ||
-							order.payments.length === 0) && (
-							<div className="flex w-full gap-4 items-start flex-col">
-								{loading && (
-									<LoadingOverlay
-										visible={loading}
-										zIndex={10}
-										overlayProps={{ radius: "xs", blur: 1 }}
-									/>
-								)}
+// 						{/* STEP 2: Show input only if at least one payment is paid and not fully paid */}
+// 						{((order.payments.some(
+// 							(payment) => payment.isPaid || payment.paymentLink
+// 						) &&
+// 							order.payments
+// 								.filter((payment) => payment.isPaid || payment.paymentLink)
+// 								.reduce((acc, curr) => acc + curr.amount, 0) <
+// 								order.orderTotalPrice) ||
+// 							order.payments.length === 0) && (
+// 							<div className="flex w-full gap-4 items-start flex-col">
+// 								{loading && (
+// 									<LoadingOverlay
+// 										visible={loading}
+// 										zIndex={10}
+// 										overlayProps={{ radius: "xs", blur: 1 }}
+// 									/>
+// 								)}
 
-								<div className="w-full space-y-1">
-									<label htmlFor="payment" className="font-semibold block mb-1">
-										Add Online Payment <span className="text-skyblue">*</span>
-									</label>
-									<Input
-										id="payment"
-										type="number"
-										step="1"
-										min="0"
-										max={dueAmount}
-										name="amount"
-										value={paymentFormData.amount}
-										onChange={handleChange}
-										placeholder="Enter payment amount"
-										className="w-full input-type-number"
-										error={errors.amount ? true : false}
-									/>
-									{errors.amount && (
-										<p className="text-rose-500 text-sm">{errors.amount}</p>
-									)}
-								</div>
-								<Button onClick={handleSubmit}>Add Payment</Button>
-							</div>
-						)}
-					</>
-				)}
+// 								<div className="w-full space-y-1">
+// 									<label htmlFor="payment" className="font-semibold block mb-1">
+// 										Add Online Payment <span className="text-skyblue">*</span>
+// 									</label>
+// 									<Input
+// 										id="payment"
+// 										type="number"
+// 										step="1"
+// 										min="0"
+// 										max={dueAmount}
+// 										name="amount"
+// 										value={paymentFormData.amount}
+// 										onChange={handleChange}
+// 										placeholder="Enter payment amount"
+// 										className="w-full input-type-number"
+// 										error={errors.amount ? true : false}
+// 									/>
+// 									{errors.amount && (
+// 										<p className="text-rose-500 text-sm">{errors.amount}</p>
+// 									)}
+// 								</div>
+// 								<Button onClick={handleSubmit}>Add Payment</Button>
+// 							</div>
+// 						)}
+// 					</>
+// 				)}
 
-				{order.paymentMethod === "cod-payment" &&
-					order.paymentStatus !== "paid" &&
-					order.payments.length < 2 && ( // show input only if less than 2 installments
-						<div className="flex w-full gap-4 items-start flex-col">
-							{loading && (
-								<LoadingOverlay
-									visible={loading}
-									zIndex={10}
-									overlayProps={{ radius: "xs", blur: 1 }}
-								/>
-							)}
+// 				{order.paymentMethod === "cod-payment" &&
+// 					order.paymentStatus !== "paid" &&
+// 					order.payments.length < 2 && ( // show input only if less than 2 installments
+// 						<div className="flex w-full gap-4 items-start flex-col">
+// 							{loading && (
+// 								<LoadingOverlay
+// 									visible={loading}
+// 									zIndex={10}
+// 									overlayProps={{ radius: "xs", blur: 1 }}
+// 								/>
+// 							)}
 
-							<div className="w-full space-y-1">
-								<label htmlFor="payment" className="font-semibold block mb-1">
-									Add Cash Payment <span className="text-skyblue">*</span>
-								</label>
-								<Input
-									id="payment"
-									type="number"
-									step="1"
-									min="0"
-									max={dueAmount}
-									name="amount"
-									value={paymentFormData.amount}
-									onChange={handleChange}
-									placeholder="Enter payment amount"
-									className="w-full input-type-number"
-									error={errors.amount ? true : false}
-								/>
-								{errors.amount && (
-									<p className="text-rose-500 text-sm">{errors.amount}</p>
-								)}
-							</div>
-							<Button onClick={handleSubmit}>Cash Received</Button>
-						</div>
-					)}
-			</div>
-		</div>
-	);
-};
+// 							<div className="w-full space-y-1">
+// 								<label htmlFor="payment" className="font-semibold block mb-1">
+// 									Add Cash Payment <span className="text-skyblue">*</span>
+// 								</label>
+// 								<Input
+// 									id="payment"
+// 									type="number"
+// 									step="1"
+// 									min="0"
+// 									max={dueAmount}
+// 									name="amount"
+// 									value={paymentFormData.amount}
+// 									onChange={handleChange}
+// 									placeholder="Enter payment amount"
+// 									className="w-full input-type-number"
+// 									error={errors.amount ? true : false}
+// 								/>
+// 								{errors.amount && (
+// 									<p className="text-rose-500 text-sm">{errors.amount}</p>
+// 								)}
+// 							</div>
+// 							<Button onClick={handleSubmit}>Cash Received</Button>
+// 						</div>
+// 					)}
+// 			</div>
+// 		</div>
+// 	);
+// };
 
 export default ActiveOrder;

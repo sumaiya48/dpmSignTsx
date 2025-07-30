@@ -1,7 +1,7 @@
 // Documentation: This component displays a list of completed orders, allowing users to search, filter, export, and manage visible table columns.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, FileSpreadsheet, FileText, Settings } from "lucide-react";
+import { Search, FileSpreadsheet, FileText } from "lucide-react";
 import {
 	Select,
 	SelectContent,
@@ -14,14 +14,14 @@ import Header from "@/components/header";
 import ColumnManager from "@/components/ui/ColumnManager";
 import { useOrders } from "@/hooks/use-order";
 import { useToast } from "@/hooks/use-toast";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { createCSV, createExcelSheet } from "@/lib/utils";
 // Documentation: Corrected import path for OrderTable to be a sibling component within src/pages/order.
 import OrderTable from "./OrderTable";
 // Documentation: Corrected import path for OrderViewDialog to be relative to src/pages/order/dialogs.
-import OrderViewDialog from "./dialogs/OrderViewDialog";
+// import OrderViewDialog from "./dialogs/OrderViewDialog";
 // Documentation: Corrected import path for ProductDetailSheet to be relative to src/pages/order/dialogs.
-import ProductDetailSheet from "./dialogs/ProductDetailSheet";
+// import ProductDetailSheet from "./dialogs/ProductDetailSheet";
 
 const CompletedOrder = () => {
 	// State to manage visible columns in the table
@@ -236,214 +236,214 @@ const CompletedOrder = () => {
 };
 
 // Documentation: OrderImageSlider component displays a carousel of order-related images.
-const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
-	if (!images.length) return null;
+// const OrderImageSlider = ({ images }: { images: OrderImageProps[] }) => {
+// 	if (!images.length) return null;
 
-	return (
-		<div className="w-full">
-			<h3 className="text-lg font-semibold mb-4">Order Images</h3>
-			<Carousel className="w-full">
-				<CarouselContent>
-					{images.map((image, index) => (
-						<CarouselItem key={index} className="md:basis-1/4">
-							<div className="p-1">
-								<div className="rounded-lg overflow-hidden aspect-square">
-									<img
-										src={image.imageUrl}
-										alt={`Order item ${index + 1}`}
-										className="w-full h-full object-cover"
-									/>
-								</div>
-							</div>
-						</CarouselItem>
-					))}
-				</CarouselContent>
-				{/* <CarouselPrevious />
-				<CarouselNext /> */}
-			</Carousel>
-		</div>
-	);
-};
+// 	return (
+// 		<div className="w-full">
+// 			<h3 className="text-lg font-semibold mb-4">Order Images</h3>
+// 			<Carousel className="w-full">
+// 				<CarouselContent>
+// 					{images.map((image, index) => (
+// 						<CarouselItem key={index} className="md:basis-1/4">
+// 							<div className="p-1">
+// 								<div className="rounded-lg overflow-hidden aspect-square">
+// 									<img
+// 										src={image.imageUrl}
+// 										alt={`Order item ${index + 1}`}
+// 										className="w-full h-full object-cover"
+// 									/>
+// 								</div>
+// 							</div>
+// 						</CarouselItem>
+// 					))}
+// 				</CarouselContent>
+// 				{/* <CarouselPrevious />
+// 				<CarouselNext /> */}
+// 			</Carousel>
+// 		</div>
+// 	);
+// };
 
 // Documentation: PaymentSection component displays payment details and allows for adding cash or online payments.
-const PaymentSection = ({
-	order,
-	orderTotalCouponCheckedPrice,
-}: {
-	order: OrderProps;
-	orderTotalCouponCheckedPrice: number | null;
-}) => {
-	const { toast } = useToast();
+// const PaymentSection = ({
+// 	order,
+// 	orderTotalCouponCheckedPrice,
+// }: {
+// 	order: OrderProps;
+// 	orderTotalCouponCheckedPrice: number | null;
+// }) => {
+// 	const { toast } = useToast();
 
-	const suggestedPayment = Math.floor(order.orderTotalPrice * 0.25); // 25% of total amount
+// 	const suggestedPayment = Math.floor(order.orderTotalPrice * 0.25); // 25% of total amount
 
-	return (
-		<div className="bg-gray-50 py-4 rounded-lg">
-			<div className="space-y-4">
-				<div className="grid gap-4 md:grid-cols-2">
-					<div>
-						<p className="text-sm mb-1">Total Order Amount</p>
-						<p className="font-semibold text-lg">
-							{orderTotalCouponCheckedPrice
-								? orderTotalCouponCheckedPrice.toLocaleString()
-								: "Calculating"}
-							{" " + currencyCode}
-							{orderTotalCouponCheckedPrice !== order.orderTotalPrice && (
-								<span className="text-sm text-neutral-500">
-									{" "}
-									({order.orderTotalPrice.toLocaleString()}
-									{" " + currencyCode})
-								</span>
-							)}
-						</p>
-					</div>
-					{order.payments.length > 0 ? (
-						<div className="flex flex-col gap-2">
-							<div>
-								<p className="text-sm mb-1">Payment History</p>
-								{order.payments.map((payment) => (
-									<p key={payment.paymentId} className="text-sm space-y-1">
-										<span className="font-semibold text-lg">
-											{payment.isPaid
-												? `Paid ${payment.amount.toLocaleString()} ${currencyCode} `
-												: `Pending ${payment.amount.toLocaleString()} ${currencyCode} `}
-										</span>
-										at {new Date(payment.createdAt).toDateString()}
-									</p>
-								))}
-							</div>
-						</div>
-					) : (
-						<div>
-							<p className="text-sm  mb-1">Suggested Initial Payment (25%)</p>
-							<p className="font-semibold text-lg">
-								{suggestedPayment.toLocaleString()}
-								{" " + currencyCode}
-							</p>
-						</div>
-					)}
-				</div>
+// 	return (
+// 		<div className="bg-gray-50 py-4 rounded-lg">
+// 			<div className="space-y-4">
+// 				<div className="grid gap-4 md:grid-cols-2">
+// 					<div>
+// 						<p className="text-sm mb-1">Total Order Amount</p>
+// 						<p className="font-semibold text-lg">
+// 							{orderTotalCouponCheckedPrice
+// 								? orderTotalCouponCheckedPrice.toLocaleString()
+// 								: "Calculating"}
+// 							{" " + currencyCode}
+// 							{orderTotalCouponCheckedPrice !== order.orderTotalPrice && (
+// 								<span className="text-sm text-neutral-500">
+// 									{" "}
+// 									({order.orderTotalPrice.toLocaleString()}
+// 									{" " + currencyCode})
+// 								</span>
+// 							)}
+// 						</p>
+// 					</div>
+// 					{order.payments.length > 0 ? (
+// 						<div className="flex flex-col gap-2">
+// 							<div>
+// 								<p className="text-sm mb-1">Payment History</p>
+// 								{order.payments.map((payment) => (
+// 									<p key={payment.paymentId} className="text-sm space-y-1">
+// 										<span className="font-semibold text-lg">
+// 											{payment.isPaid
+// 												? `Paid ${payment.amount.toLocaleString()} ${currencyCode} `
+// 												: `Pending ${payment.amount.toLocaleString()} ${currencyCode} `}
+// 										</span>
+// 										at {new Date(payment.createdAt).toDateString()}
+// 									</p>
+// 								))}
+// 							</div>
+// 						</div>
+// 					) : (
+// 						<div>
+// 							<p className="text-sm  mb-1">Suggested Initial Payment (25%)</p>
+// 							<p className="font-semibold text-lg">
+// 								{suggestedPayment.toLocaleString()}
+// 								{" " + currencyCode}
+// 							</p>
+// 						</div>
+// 					)}
+// 				</div>
 
-				{order.paymentMethod === "online-payment" && (
-					<>
-						{/* STEP 1: Show payment link only if no payment is paid */}
-						{order.payments.length > 0 &&
-							order.payments.some((payment) => !payment.isPaid) && (
-								<div className="space-y-1">
-									<p className="text-sm mb-1">
-										Customer has not paid yet. Copy the link below and complete
-										the payment.
-									</p>
-									<Button
-										onClick={() => {
-											if (
-												order.payments.filter(
-													(payment) => !payment.isPaid && payment.paymentLink
-												).length > 0
-											) {
-												document.execCommand(
-													"copy",
-													false,
-													order.payments.filter(
-														(payment) => !payment.isPaid && payment.paymentLink
-													)[0].paymentLink as any
-												);
-												toast({
-													description: "Payment link copied to clipboard.",
-													variant: "success",
-													duration: 10000,
-												});
-											}
-										}}
-									>
-										<Clipboard /> Copy Payment Link
-									</Button>
-								</div>
-							)}
+// 				{order.paymentMethod === "online-payment" && (
+// 					<>
+// 						{/* STEP 1: Show payment link only if no payment is paid */}
+// 						{order.payments.length > 0 &&
+// 							order.payments.some((payment) => !payment.isPaid) && (
+// 								<div className="space-y-1">
+// 									<p className="text-sm mb-1">
+// 										Customer has not paid yet. Copy the link below and complete
+// 										the payment.
+// 									</p>
+// 									<Button
+// 										onClick={() => {
+// 											if (
+// 												order.payments.filter(
+// 													(payment) => !payment.isPaid && payment.paymentLink
+// 												).length > 0
+// 											) {
+// 												document.execCommand(
+// 													"copy",
+// 													false,
+// 													order.payments.filter(
+// 														(payment) => !payment.isPaid && payment.paymentLink
+// 													)[0].paymentLink as any
+// 												);
+// 												toast({
+// 													description: "Payment link copied to clipboard.",
+// 													variant: "success",
+// 													duration: 10000,
+// 												});
+// 											}
+// 										}}
+// 									>
+// 										<Clipboard /> Copy Payment Link
+// 									</Button>
+// 								</div>
+// 							)}
 
-						{/* STEP 2: Show input only if at least one payment is paid and not fully paid */}
-						{/* {((order.payments.some((payment) => payment.isPaid) &&
-							order.payments
-								.filter((payment) => payment.isPaid)
-								.reduce((acc, curr) => acc + curr.amount, 0) <
-								order.orderTotalPrice) ||
-							order.payments.length === 0) && (
-							<div className="flex w-full gap-4 items-start flex-col">
-								{loading && (
-									<LoadingOverlay
-										visible={loading}
-										zIndex={10}
-										overlayProps={{ radius: "xs", blur: 1 }}
-									/>
-								)}
+// 						{/* STEP 2: Show input only if at least one payment is paid and not fully paid */}
+// 						{/* {((order.payments.some((payment) => payment.isPaid) &&
+// 							order.payments
+// 								.filter((payment) => payment.isPaid)
+// 								.reduce((acc, curr) => acc + curr.amount, 0) <
+// 								order.orderTotalPrice) ||
+// 							order.payments.length === 0) && (
+// 							<div className="flex w-full gap-4 items-start flex-col">
+// 								{loading && (
+// 									<LoadingOverlay
+// 										visible={loading}
+// 										zIndex={10}
+// 										overlayProps={{ radius: "xs", blur: 1 }}
+// 									/>
+// 								)}
 
-								<div className="w-full space-y-1">
-									<label htmlFor="payment" className="font-semibold block mb-1">
-										Add Online Payment <span className="text-skyblue">*</span>
-									</label>
-									<Input
-										id="payment"
-										type="number"
-										step="1"
-										min="0"
-										max={dueAmount}
-										name="amount"
-										value={paymentFormData.amount}
-										onChange={handleChange}
-										placeholder="Enter payment amount"
-										className="w-full input-type-number"
-										error={errors.amount ? true : false}
-									/>
-									{errors.amount && (
-										<p className="text-rose-500 text-sm">{errors.amount}</p>
-									)}
-								</div>
-								<Button onClick={handleSubmit}>Add Payment</Button>
-							</div>
-						)} */}
-					</>
-				)}
+// 								<div className="w-full space-y-1">
+// 									<label htmlFor="payment" className="font-semibold block mb-1">
+// 										Add Online Payment <span className="text-skyblue">*</span>
+// 									</label>
+// 									<Input
+// 										id="payment"
+// 										type="number"
+// 										step="1"
+// 										min="0"
+// 										max={dueAmount}
+// 										name="amount"
+// 										value={paymentFormData.amount}
+// 										onChange={handleChange}
+// 										placeholder="Enter payment amount"
+// 										className="w-full input-type-number"
+// 										error={errors.amount ? true : false}
+// 									/>
+// 									{errors.amount && (
+// 										<p className="text-rose-500 text-sm">{errors.amount}</p>
+// 									)}
+// 								</div>
+// 								<Button onClick={handleSubmit}>Add Payment</Button>
+// 							</div>
+// 						)} */}
+// 					</>
+// 				)}
 
-				{/* {order.paymentMethod === "cod-payment" &&
-					order.paymentStatus !== "paid" &&
-					order.payments.length < 2 && ( // show input only if less than 2 installments
-						<div className="flex w-full gap-4 items-start flex-col">
-							{loading && (
-								<LoadingOverlay
-									visible={loading}
-									zIndex={10}
-									overlayProps={{ radius: "xs", blur: 1 }}
-								/>
-							)}
+// 				{/* {order.paymentMethod === "cod-payment" &&
+// 					order.paymentStatus !== "paid" &&
+// 					order.payments.length < 2 && ( // show input only if less than 2 installments
+// 						<div className="flex w-full gap-4 items-start flex-col">
+// 							{loading && (
+// 								<LoadingOverlay
+// 									visible={loading}
+// 									zIndex={10}
+// 									overlayProps={{ radius: "xs", blur: 1 }}
+// 								/>
+// 							)}
 
-							<div className="w-full space-y-1">
-								<label htmlFor="payment" className="font-semibold block mb-1">
-									Add Cash Payment <span className="text-skyblue">*</span>
-								</label>
-								<Input
-									id="payment"
-									type="number"
-									step="1"
-									min="0"
-									max={dueAmount}
-									name="amount"
-									value={paymentFormData.amount}
-									onChange={handleChange}
-									placeholder="Enter payment amount"
-									className="w-full input-type-number"
-									error={errors.amount ? true : false}
-								/>
-								{errors.amount && (
-									<p className="text-rose-500 text-sm">{errors.amount}</p>
-								)}
-							</div>
-							<Button onClick={handleSubmit}>Cash Received</Button>
-						</div>
-					)} */}
-			</div>
-		</div>
-	);
-};
+// 							<div className="w-full space-y-1">
+// 								<label htmlFor="payment" className="font-semibold block mb-1">
+// 									Add Cash Payment <span className="text-skyblue">*</span>
+// 								</label>
+// 								<Input
+// 									id="payment"
+// 									type="number"
+// 									step="1"
+// 									min="0"
+// 									max={dueAmount}
+// 									name="amount"
+// 									value={paymentFormData.amount}
+// 									onChange={handleChange}
+// 									placeholder="Enter payment amount"
+// 									className="w-full input-type-number"
+// 									error={errors.amount ? true : false}
+// 								/>
+// 								{errors.amount && (
+// 									<p className="text-rose-500 text-sm">{errors.amount}</p>
+// 								)}
+// 							</div>
+// 							<Button onClick={handleSubmit}>Cash Received</Button>
+// 						</div>
+// 					)} */}
+// 			</div>
+// 		</div>
+// 	);
+// };
 
 // Documentation: Corrected export name to match the file name.
 export default CompletedOrder;

@@ -178,7 +178,8 @@ class Order {
 		couponId: number | null,
 		amount: number,
 		orderTotal: number,
-		orderItems: CartItemProps[]
+		orderItems: CartItemProps[],
+		role: string | null
 		// {
 		// 	productId: number;
 		// 	productVariantId?: number;
@@ -217,7 +218,9 @@ class Order {
 			if (staffId) {
 				form.append("staffId", staffId?.toString());
 			}
-
+			if (role) {
+	form.append("role", role);
+}
 			if (couponId) {
 				form.append("couponId", couponId?.toString());
 			}

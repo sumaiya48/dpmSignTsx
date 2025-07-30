@@ -2,7 +2,7 @@
 // including order date, estimated delivery date (with editable option), and current status.
 import React from "react";
 import { Clock, CalendarIcon, Package } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import {
 	Select,
 	SelectContent,

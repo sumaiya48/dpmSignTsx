@@ -123,7 +123,7 @@ const Invoice = () => {
 		designCharge,
 		installationCharge,
 		grandTotal,
-		totalPaidAmount,
+		// totalPaidAmount,
 		amountDue,
 	} = invoiceData;
 

@@ -1,6 +1,6 @@
 // Documentation: ProductDetailSheet component displays detailed information about a specific product item within an order.
 // It shows variation details, size, width, height, quantity, and price.
-import React from "react";
+// import React from "react";
 import {
 	Sheet,
 	SheetContent,
@@ -50,11 +50,11 @@ const ProductDetailSheet = ({
 									className="flex justify-between text-sm"
 								>
 									<span className="text-gray-500">
-										{detail.variationItem.variation.name}
+										{detail.variationItem?.variation?.name}
 									</span>
 									<span>
 										{detail.variationItem.value}{" "}
-										{detail.variationItem.variation.unit}
+										{detail.variationItem?.variation?.unit}
 									</span>
 								</div>
 							))}

@@ -3,7 +3,7 @@
 // export functionality, column management, and detailed order viewing/editing.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, FileSpreadsheet, FileText, Settings } from "lucide-react";
+import { Search, FileSpreadsheet, FileText} from "lucide-react";
 import {
 	Select,
 	SelectContent,
@@ -16,7 +16,7 @@ import Header from "@/components/header";
 import ColumnManager from "@/components/ui/ColumnManager";
 import { useOrders } from "@/hooks/use-order";
 import { useToast } from "@/hooks/use-toast";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { createCSV, createExcelSheet } from "@/lib/utils";
 // Documentation: Corrected import path for OrderTable to be a sibling component within src/pages/order.
 import OrderTable from "./OrderTable";
