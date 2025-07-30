@@ -181,7 +181,7 @@ const CartPanel = () => {
 					checkoutFormData.amount,
 					orderSummary.total,
 					checkoutFormData.orderItems,
-					user?.role || null // Added: Pass the user's role to the backend as expected by createOrder method
+					null // Temporarily removed role parameter - backend is rejecting it for all users
 				);
 
 				if (response.status === 201) {

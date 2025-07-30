@@ -203,7 +203,7 @@ const OrderProvider = ({
 				filteredBy,
 				page,
 				limit,
-				user?.role // New parameter: Pass the user's role to the backend
+				null // Temporarily removed role parameter - backend is rejecting it for all users
 			);
 
 			const updatedOrders = response.data.orders.map((item: OrderProps) => ({
