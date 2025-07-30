@@ -12,6 +12,15 @@ import { Separator } from "@/components/ui/separator";
 import { OrderItemProps } from "@/hooks/use-order"; // Assuming OrderItemProps is imported
 import { currencyCode } from "@/config";
 
+// Extended interface to handle variation information safely
+interface ExtendedVariationItem {
+	value: string;
+	variation?: {
+		name: string;
+		unit: string;
+	};
+}
+
 interface ProductDetailSheetProps {
 	isOpen: boolean;
 	onClose: () => void;
@@ -50,11 +59,15 @@ const ProductDetailSheet = ({
 									className="flex justify-between text-sm"
 								>
 									<span className="text-gray-500">
-										{detail.variationItem?.variation?.name}
+										{/* Updated: Using type-safe casting to ExtendedVariationItem interface */}
+										{(detail.variationItem as ExtendedVariationItem)?.variation
+											?.name || "Variation"}
 									</span>
 									<span>
 										{detail.variationItem.value}{" "}
-										{detail.variationItem?.variation?.unit}
+										{/* Updated: Using type-safe casting to ExtendedVariationItem interface */}
+										{(detail.variationItem as ExtendedVariationItem)?.variation
+											?.unit || ""}
 									</span>
 								</div>
 							))}

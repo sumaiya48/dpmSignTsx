@@ -219,8 +219,8 @@ class Order {
 				form.append("staffId", staffId?.toString());
 			}
 			if (role) {
-	form.append("role", role);
-}
+				form.append("role", role);
+			}
 			if (couponId) {
 				form.append("couponId", couponId?.toString());
 			}
@@ -317,7 +317,8 @@ class Order {
 			| "customer-email",
 		filteredBy: "all" | "active" | "requested" | "completed" | "cancelled",
 		page: number,
-		limit: number
+		limit: number,
+		role?: string | null // Added: Optional role parameter to support enhanced filtering
 	) => {
 		try {
 			const params = new URLSearchParams({
@@ -329,6 +330,11 @@ class Order {
 			if (searchTerm.length > 0) {
 				params.append("searchTerm", searchTerm);
 				params.append("searchBy", searchBy);
+			}
+
+			// Added: Include role parameter in API call if provided
+			if (role) {
+				params.append("role", role);
 			}
 
 			const response = await apiClient.get(
